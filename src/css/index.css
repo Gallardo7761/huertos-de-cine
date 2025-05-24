@@ -1,0 +1,14 @@
+:root {
+    --primary-bg: #6F5561;
+    --secondary-bg: #58404A;
+    --tertiary-bg: #49333B;
+
+    --primary-fg: #E84F59;
+    --secondary-fg: #D3323C;
+    --tertiary-fg: #B71821;
+}
+
+* {
+    background-color: var(--tertiary-bg);
+    color: var(--secondary-fg)
+}
