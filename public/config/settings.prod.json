@@ -1,0 +1,18 @@
+{
+    "apiConfig": {
+        "baseUrl": "https://api.miarma.net/huertosdecine/v1",
+        "baseRawUrl": "https://api.miarma.net/huertosdecine/raw/v1",
+        "coreUrl": "https://api.miarma.net/v1",
+        "coreRawUrl": "https://api.miarma.net/raw/v1",
+        "authUrl": "https://api.miarma.net/auth/v1",
+        "endpoints": {
+            "auth": {
+                "login": "/login",
+                "validateToken": "/validate-token",
+                "refreshToken": "/refresh-token",
+                "changePassword": "/change-password",
+                "loginValidate": "/login/validate"
+            }
+        }
+    }
+}

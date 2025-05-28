@@ -1,53 +1,65 @@
 /* ================================
    LOGIN - CARD CONTAINER (VISUAL)
 ================================== */
-
 .login-card {
-  background-color: var(--login-bg) !important;
+  background-color: var(--cocoa-brown-light-1) !important;
   color: var(--text-color);
-  box-shadow: 0 0 10px var(--shadow-color);
-  
+  box-shadow: 0 0 10px black;
+  border: none;
 }
 
 /* ================================
      INPUTS VISUALES
-  ================================== */
-
+================================== */
 input.form-control {
-  background-color: var(--input-bg);
-  color: var(--input-text);
-  border: 1px solid var(--input-border);
-  
+  background-color: var(--cocoa-brown-light-2);
+  color: var(--text-color);
+  border: none;
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+input.form-control::placeholder {
+  color: #ffffff80;
+  font-style: italic;
 }
 
 /* ================================
      LABELS PERSONALIZADAS
-  ================================== */
-
-.form-floating>label {
-  font-family: 'Product Sans';
+================================== */
+label {
+  font-family: 'Product Sans', sans-serif;
   font-size: 1.1em;
-  color: var(--label-color);
-}
-
-.form-floating>label::after {
-  background-color: transparent !important;
+  color: var(--selective-yellow-light);
+  margin-bottom: 0.25rem;
 }
 
 /* ================================
      BOTÓN VISUAL
-  ================================== */
-
+================================== */
 .login-button {
-  font-family: 'Product Sans' !important;
+  font-family: 'Product Sans', sans-serif !important;
   font-size: 1.3em !important;
   font-weight: bold !important;
-  background-color: var(--login-btn-bg) !important;
-  color: var(--login-btn-text) !important;
-  
+  background-color: var(--selective-yellow) !important;
+  color: black !important;
+  transition: all 0.2s ease-in-out;
 }
 
 .login-button:hover {
-  background-color: var(--login-btn-hover) !important;
-  color: var(--login-btn-text-hover) !important;
+  background-color: var(--hover-color) !important;
+  color: black !important;
+}
+
+/* ================================
+     CHECKBOX / FORM CHECK
+================================== */
+.form-check-label {
+  color: var(--text-color);
+  font-size: 0.95em;
+}
+
+.form-check-input:checked {
+  background-color: var(--selective-yellow-dark);
+  border-color: var(--selective-yellow-dark);
 }

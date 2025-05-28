@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import Login from "@/pages/Login";
 import Votar from "@/pages/Votar";
 import NotFound from "@/pages/NotFound";
+import Footer from "@/components/Footer";
 
 const App = () => {
 
@@ -11,9 +12,10 @@ const App = () => {
       <Header />
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/votar" element={<Votar />} />
+        {/* <Route path="/votar" element={<Votar />} /> */}
         <Route path="/*" element={<NotFound />} />
       </Routes>
+      <Footer />
     </>
   )
 }

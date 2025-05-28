@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { Form, Button, Alert, FloatingLabel } from 'react-bootstrap';
+import { Form, Button, Alert } from 'react-bootstrap';
 import PasswordInput from './PasswordInput.jsx';
 
 import { useContext, useState } from "react";
@@ -29,20 +29,19 @@ const LoginForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
-        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.emailOrUserName);
 
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.emailOrUserName);
         const loginBody = {
             password: formState.password,
             keepLoggedIn: Boolean(formState.keepLoggedIn),
         };
-    
+
         if (isEmail) {
             loginBody.email = formState.emailOrUserName;
         } else {
             loginBody.userName = formState.emailOrUserName;
         }
-    
+
         try {
             await login(loginBody);
             navigate("/");
@@ -55,30 +54,24 @@ const LoginForm = () => {
         <CustomContainer>
             <ContentWrapper>
                 <div className="login-card card shadow p-5 rounded-5 mx-auto col-12 col-md-8 col-lg-6 col-xl-5 d-flex flex-column gap-4">
-                    <h1 className="text-center">Inicio de sesión</h1>
-                    <Alert dismissible variant="info" className="py-2 mb-0">
-                        <p className='text-dark m-0 p-0'>Los socios que lleven registrados desde antes del <strong>20/04/25</strong> mantienen su contraseña antigua.</p>
-                    </Alert>
-                    <Form className="d-flex flex-column gap-5" onSubmit={handleSubmit}>
+                    <h1 className="text-center">Hola ¿te conozco?</h1>
+                    <Form className="d-flex flex-column gap-4" onSubmit={handleSubmit}>
                         <div className="d-flex flex-column gap-3">
-                            <FloatingLabel
-                                controlId="floatingUsuario"
-                                label={
-                                    <>
-                                        <FontAwesomeIcon icon={faUser} className="me-2" />
-                                        Usuario o Email
-                                    </>
-                                }
-                            >
+                            <div className="position-relative w-100">
+                                <Form.Label htmlFor="login-input" className="fw-semibold">
+                                    <FontAwesomeIcon icon={faUser} className="me-2" />
+                                    Usuario o Email
+                                </Form.Label>
                                 <Form.Control
+                                    id="login-input"
                                     type="text"
-                                    placeholder=""
                                     name="emailOrUserName"
                                     value={formState.emailOrUserName}
                                     onChange={handleChange}
                                     className="rounded-4"
+                                    placeholder="Escribe tu usuario o email"
                                 />
-                            </FloatingLabel>
+                            </div>
 
                             <PasswordInput
                                 value={formState.password}
@@ -93,11 +86,13 @@ const LoginForm = () => {
                                     label="Mantener sesión iniciada"
                                     className="text-secondary"
                                     value={formState.keepLoggedIn}
-                                    onChange={(e) => { formState.keepLoggedIn = e.target.checked; setFormState({ ...formState }) }}
+                                    onChange={(e) => {
+                                        setFormState((prev) => ({
+                                            ...prev,
+                                            keepLoggedIn: e.target.checked,
+                                        }));
+                                    }}
                                 />
-                                {/*<Link disabled to="#" className="muted">
-                                    Olvidé mi contraseña
-                                </Link>*/}
                             </div>
                         </div>
 
@@ -118,6 +113,5 @@ const LoginForm = () => {
         </CustomContainer>
     );
 };
-
 
 export default LoginForm;
