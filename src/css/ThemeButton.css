@@ -1,0 +1,61 @@
+/* ================================
+   THEME TOGGLE - BASE
+================================== */
+
+.theme-toggle {
+  width: auto;
+  height: 40px;
+  border: none;
+  border-radius: 999px;
+  display: flex;
+  padding: 0 1rem;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  background-color: var(--toggle-bg);
+  color: var(--toggle-fg);
+  font-family: 'Product Sans';
+  font-size: 1.2rem;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.3s ease;
+}
+
+/* ================================
+     HOVER / ACTIVE STATES
+  ================================== */
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ================================
+     LIGHT THEME
+  ================================== */
+
+.light {
+  --toggle-bg: #1e1e1e;
+  --toggle-fg: #f0f0f0;
+}
+
+.light .theme-toggle {
+  box-shadow: 0 0px 10px rgba(68, 7, 182, 0.808);
+}
+
+
+/* ================================
+     DARK THEME
+  ================================== */
+
+.dark {
+  --toggle-bg: #f0f0f0;
+  --toggle-fg: #1e1e1e;
+}
+
+.dark .theme-toggle {
+  box-shadow: 0 0px 10px rgba(206, 180, 36, 0.589);
+}

@@ -1,0 +1,11 @@
+.carousel-img-wrapper {
+    padding: 0.5rem;
+}
+
+.carousel-img {
+    width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    max-height: 60vh;
+    object-fit: cover;
+}

@@ -1,14 +1,35 @@
 :root {
-    --primary-bg: #6F5561;
-    --secondary-bg: #58404A;
-    --tertiary-bg: #49333B;
+    --cocoa-brown: #332027;
+    --cocoa-brown-light-1: #46303A;
+    --cocoa-brown-light-2: #5A404D;
 
-    --primary-fg: #E84F59;
-    --secondary-fg: #D3323C;
-    --tertiary-fg: #B71821;
+    --selective-yellow: #FCB500;
+    --selective-yellow-light: #FFC526;
+    --selective-yellow-dark: #D79600;
 }
 
-* {
-    background-color: var(--tertiary-bg);
-    color: var(--secondary-fg)
+/* Tipografía global */
+div,
+label,
+input,
+p,
+span,
+a,
+button {
+  font-family: "Open Sans", sans-serif;
+  color: var(--text-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Product Sans", sans-serif;
+  color: var(--text-color);
+}
+
+body {
+  background-color: var(--cocoa-brown);
 }

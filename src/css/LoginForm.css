@@ -1,0 +1,53 @@
+/* ================================
+   LOGIN - CARD CONTAINER (VISUAL)
+================================== */
+
+.login-card {
+  background-color: var(--login-bg) !important;
+  color: var(--text-color);
+  box-shadow: 0 0 10px var(--shadow-color);
+  
+}
+
+/* ================================
+     INPUTS VISUALES
+  ================================== */
+
+input.form-control {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border: 1px solid var(--input-border);
+  
+}
+
+/* ================================
+     LABELS PERSONALIZADAS
+  ================================== */
+
+.form-floating>label {
+  font-family: 'Product Sans';
+  font-size: 1.1em;
+  color: var(--label-color);
+}
+
+.form-floating>label::after {
+  background-color: transparent !important;
+}
+
+/* ================================
+     BOTÓN VISUAL
+  ================================== */
+
+.login-button {
+  font-family: 'Product Sans' !important;
+  font-size: 1.3em !important;
+  font-weight: bold !important;
+  background-color: var(--login-btn-bg) !important;
+  color: var(--login-btn-text) !important;
+  
+}
+
+.login-button:hover {
+  background-color: var(--login-btn-hover) !important;
+  color: var(--login-btn-text-hover) !important;
+}
