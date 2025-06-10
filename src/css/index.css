@@ -9,6 +9,7 @@
     --selective-yellow-dark: #D79600;
 
     --text-color: var(--selective-yellow-light);
+    --text-muted: #B0AFAF;
     --hover-color: var(--selective-yellow-dark);
 }
 
@@ -53,7 +54,21 @@ textarea,
 select {
   background-color: var(--cocoa-brown-light-2) !important;
   color: white !important;
-  border: none;
+  border: none !important;
+}
+
+input.themed-input,
+textarea.themed-input,
+select.themed-input {
+  background-color: var(--cocoa-brown-light-2) !important;
+  color: white !important;
+  border: none !important;
+}
+
+input.themed-input::placeholder,
+textarea.themed-input::placeholder {
+  color: var(--text-muted) !important;
+  font-style: normal !important;
 }
 
 /* ================================

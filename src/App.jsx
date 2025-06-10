@@ -6,7 +6,7 @@ import NotFound from "@/pages/NotFound";
 import Footer from "@/components/Footer";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import { CONSTANTS } from "./util/constants";
-import Test from "./pages/Test";
+import FloatingMenu from "./components/FloatingMenu/FloatingMenu";
 
 const App = () => {
   return (
@@ -20,10 +20,10 @@ const App = () => {
           </ProtectedRoute>
         } />
         <Route path="/login" element={<Login />} />
-        <Route path="/test" element={<Test />} />
         <Route path="/*" element={<NotFound />} />
       </Routes>
       <Footer />
+      <FloatingMenu />
     </>
   )
 }

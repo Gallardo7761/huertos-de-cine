@@ -1,4 +1,4 @@
-.theme-toggle {
+.add-button {
     z-index: 1000;
     border: none;
     border-radius: 50%;
@@ -7,13 +7,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--primary-color);
-    color: white;
+    background-color: var(--selective-yellow);
+    color: var(--cocoa-brown) !important;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s, transform 0.3s;
 }
 
-.theme-toggle:hover {
-    background-color: var(--secondary-color);
+.add-button:hover {
+    background-color: var(--selective-yellow-light);
 }

@@ -1,0 +1,33 @@
+.upload-card {
+  
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  border: 2px dashed var(--selective-yellow) !important;
+  background-color: var(--cocoa-brown-light-2) !important;
+  color: var(--selective-yellow);
+}
+
+.upload-card:hover {
+  border: 2px dashed var(--selective-yellow-light) !important;
+  background-color: var(--cocoa-brown-light-3) !important;
+}
+
+.upload-card.highlight {
+  border-color: var(--selective-yellow-light) !important;
+  background-color: var(--cocoa-brown-light-3);
+}
+
+.upload-card .file-list {
+  margin-top: 1rem;
+  text-align: left;
+  padding: 0;
+  list-style: none;
+}
+
+.upload-card .file-list li {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--selective-yellow);
+}

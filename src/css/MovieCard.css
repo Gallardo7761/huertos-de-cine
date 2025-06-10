@@ -1,6 +1,20 @@
 .movie-card {
-  background-color: var(--cocoa-brown-light-2) !important;
+  background-color: var(--cocoa-brown) !important;
   border: none !important;
+}
+
+.movie-card button.delete-button {
+  border-top-left-radius: 0rem !important;
+  border-top-right-radius: 1rem !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.movie-card button.edit-button {
+  border-top-left-radius: 0rem !important;
+  border-top-right-radius: 0rem !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
 }
 
 .movie-card:hover {
@@ -13,9 +27,8 @@
 }
 
 .movie-vote {
-  background-color: var(--cocoa-brown-light-3) !important;
+  background-color: var(--cocoa-brown-light-2) !important;
   font-size: 2.5rem !important;
-  border-top: 5px double var(--cocoa-brown-light-1) !important;
 }
 
 .vote-button {
@@ -24,11 +37,6 @@
 
 .vote-button.active {
   color: #fffc9a !important;
-}
-
-.movie-header {
-  border-bottom: 5px dashed var(--cocoa-brown-light-1) !important;
-  height: 2rem !important;
 }
 
 .vote-count {

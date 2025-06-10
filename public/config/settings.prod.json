@@ -23,6 +23,13 @@
                 "getAll": "/viewers",
                 "getById": "/viewers/:viewer_id",
                 "getVotesByUserAndMovieId": "/viewers/:viewer_id/votes/:movie_id"
+            },
+            "files": {
+                "all": "/files",
+                "byId": "/files/:file_id",
+                "upload": "/files/upload",
+                "download": "/files/download/:file_id",
+                "userFiles": "/files/myfiles"
             }
         }
     }

@@ -5,7 +5,7 @@ import IfAuthenticated from "@/components/Auth/IfAuthenticated";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignOut } from '@fortawesome/free-solid-svg-icons';
+import { faChartColumn, faSignOut } from '@fortawesome/free-solid-svg-icons';
 
 const Header = () => {
     const { logout } = useAuth();
@@ -32,6 +32,12 @@ const Header = () => {
                         </Link>
                     }
                 >
+                    <div className="d-flex m-0 p-0 gap-5">
+                        <Link to="/votar" className="nav-link p-0">
+                            <FontAwesomeIcon icon={faChartColumn} className="me-2" />
+                            votos
+                        </Link>
+                    </div>
                 </Navbar>
             </IfAuthenticated>
         </>

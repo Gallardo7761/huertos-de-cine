@@ -1,0 +1,41 @@
+.file-card {
+    border: none !important;
+  }
+  
+  .file-card .card-body {
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    
+    color: var(--selective-yellow);
+    background-color: var(--cocoa-brown-light-1);
+    cursor: pointer;
+    overflow: hidden;
+  }
+  
+  .file-card:hover {
+    transform: scale(1.02);
+  }
+  
+  .file-card img {
+    max-width: 48px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .file-card p {
+    font-size: 0.85rem;
+    margin: 0;
+    color: var(--selective-yellow);
+  }
+  
+  .file-card .delete-btn {
+    font-size: 1.2rem;
+    padding: 0.25rem 0.5rem;
+    color: white;
+    
+  }
+  
+  .file-card .delete-btn:hover {
+    color: var(--bs-danger);
+  }
+  

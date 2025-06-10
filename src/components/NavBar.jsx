@@ -13,7 +13,7 @@ const NavBar = ({ children, rightContent }) => {
 
   return (
     <nav className="navbar navbar-expand sticky-top navbar-dark shadow-sm py-3">
-      <div className="container-fluid">
+      <div className="container">
         <_motion.div
           className="collapse navbar-collapse"
           id="navbarContent"

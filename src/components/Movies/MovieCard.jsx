@@ -1,16 +1,20 @@
 import '@/css/MovieCard.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import CustomModal from '../CustomModal';
-import { faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+import { faAlignCenter, faCancel, faEdit, faImage, faPenFancy, faSave, faThumbsDown, faThumbsUp, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useData } from '@/hooks/useData';
 import { useConfig } from '@/hooks/useConfig';
+import { Button, Form, Alert } from 'react-bootstrap';
+import FileUpload from '@/components/FileUpload';
 
 const MovieCard = ({ movie_id, title, description, cover }) => {
   const [modal, setModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
   const [votes, setVotes] = useState(0);
   const [userVote, setUserVote] = useState(null); // 'up', 'down' o null
-  const { getData, postData, deleteDataWithBody } = useData();
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const { getData, putData, postData, deleteData, deleteDataWithBody } = useData();
   const { config } = useConfig();
   const userId = JSON.parse(localStorage.getItem('user') || '{}')?.user_id;
 
@@ -70,9 +74,71 @@ const MovieCard = ({ movie_id, title, description, cover }) => {
 
   const handleVoteClick = (type) => (userVote === type ? handleUnvote() : sendVote(type));
 
+  const handleDelete = () => {
+    setDeleteTarget(movie_id);
+  }
+
+  const handleEdit = async (formData) => {
+    const editUrl = `${config.apiConfig.baseRawUrl}${config.apiConfig.endpoints.movies.getById}`.replace(':movie_id', movie_id);
+
+    let coverUrl = cover;
+
+    if (formData.coverFile) {
+      // === Lógica de subida de archivo ===
+      const file = formData.coverFile;
+      const file_name = file.name;
+      const mime_type = file.type || "application/octet-stream";
+      const uploaded_by = JSON.parse(localStorage.getItem("user"))?.user_id;
+      const context = 3;
+
+      const fileFormData = new FormData();
+      fileFormData.append("file", file);
+      fileFormData.append("file_name", file_name);
+      fileFormData.append("mime_type", mime_type);
+      fileFormData.append("uploaded_by", uploaded_by);
+      fileFormData.append("context", context);
+
+      const uploadUrl = `${config.apiConfig.coreRawUrl}${config.apiConfig.endpoints.files.upload}`;
+
+      try {
+        await postData(uploadUrl, fileFormData);
+        coverUrl = `https://miarma.net/files/cine/${file_name}`;
+      } catch (err) {
+        console.error("Error al subir archivo:", err);
+        return; // no sigas si el archivo ha fallado
+      }
+      // =====================================
+    }
+
+    const data = {
+      movie_id,
+      title: formData.title,
+      description: formData.description,
+      cover: coverUrl,
+    };
+
+    try {
+      await putData(editUrl, data);
+    } catch (err) {
+      console.error("Error al editar la película:", err.message);
+    }
+  };
+
   return (
     <>
       <div className="movie-card rounded-4 card m-0 p-0 col-md-4 col-xl-2 shadow-sm">
+        <div className="d-flex m-0 p-0 position-absolute top-0 end-0">
+          <button className="btn btn-primary edit-button"
+            onClick={() => setEditModal(true)}
+          >
+            <FontAwesomeIcon icon={faEdit} className='fa-lg' />
+          </button>
+          <button className="btn btn-danger delete-button"
+            onClick={handleDelete}
+          >
+            <FontAwesomeIcon icon={faTrash} className='fa-lg' />
+          </button>
+        </div>
         <img
           src={cover}
           alt={`Cartel de ${title}`}
@@ -99,13 +165,142 @@ const MovieCard = ({ movie_id, title, description, cover }) => {
           </div>
         </div>
       </div>
+
       <CustomModal show={modal} onClose={() => setModal(false)} title={title}>
         <div className="p-3 movie-description">
           <p>{description}</p>
         </div>
       </CustomModal>
+
+      <CustomModal
+        title="Confirmar eliminación"
+        show={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+      >
+        <p className='p-3'>¿Estás seguro de que quieres eliminar la película?</p>
+        <div className="d-flex justify-content-end gap-2 mt-3 p-3">
+          <Button variant="secondary" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+          <Button
+            variant="danger"
+            onClick={async () => {
+              try {
+                await deleteData(`${config.apiConfig.baseRawUrl}${config.apiConfig.endpoints.movies.getById}`.replace(':movie_id', deleteTarget));
+                setDeleteTarget(null);
+              } catch (err) {
+                console.error("Error al eliminar:", err.message);
+              }
+            }}
+          >
+            Confirmar
+          </Button>
+        </div>
+      </CustomModal>
+
+      <CustomModal show={editModal} onClose={() => setEditModal(false)} title="Editar película">
+        <EditMovieForm
+          initialTitle={title}
+          initialDescription={description}
+          initialCover={cover}
+          onSubmit={(formData) => {
+            handleEdit(formData);
+            setEditModal(false);
+          }}
+          onCancel={() => setEditModal(false)}
+        />
+      </CustomModal>
     </>
   );
 };
+
+const EditMovieForm = ({ initialTitle, initialDescription, initialCover, onSubmit, onCancel }) => {
+  const [title, setTitle] = useState(initialTitle);
+  const [description, setDescription] = useState(initialDescription);
+  const [files, setFiles] = useState([]);
+  const [errors, setErrors] = useState(null);
+  const fileUploadRef = useRef();
+
+  const handleSubmit = () => {
+    const validationErrors = [];
+    if (!title.trim()) validationErrors.push("El título es obligatorio.");
+    if (!description.trim()) validationErrors.push("La descripción es obligatoria.");
+
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors(null);
+    const formData = {
+      title,
+      description,
+      coverFile: files[0] || null, // Solo mandas si cambió
+    };
+
+    onSubmit?.(formData);
+  };
+
+  return (
+    <div className="p-3">
+      <Form>
+        {errors && (
+          <Alert variant="danger">
+            <ul className="mb-0">
+              {errors.map((err, idx) => (
+                <li key={idx}>{err}</li>
+              ))}
+            </ul>
+          </Alert>
+        )}
+
+        <Form.Group className="mb-3" controlId="formTitle">
+          <Form.Label>
+            <FontAwesomeIcon icon={faPenFancy} className="me-2" />
+            Título
+          </Form.Label>
+          <Form.Control
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="themed-input rounded-4"
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formDescription">
+          <Form.Label>
+            <FontAwesomeIcon icon={faAlignCenter} className="me-2" />
+            Descripción
+          </Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="themed-input rounded-4"
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>
+            <FontAwesomeIcon icon={faImage} className="me-2" />
+            Nueva portada (opcional)
+          </Form.Label>
+          <FileUpload ref={fileUploadRef} onFilesSelected={setFiles} />
+        </Form.Group>
+
+        <div className="d-flex justify-content-end mt-4">
+          <Button variant="danger" onClick={onCancel} className="me-2">
+            <FontAwesomeIcon icon={faCancel} className="me-2" />
+            Cancelar
+          </Button>
+          <Button variant="warning" onClick={handleSubmit}>
+            <FontAwesomeIcon icon={faSave} className="me-2" />
+            Guardar
+          </Button>
+        </div>
+      </Form>
+    </div>
+  );
+};
+
 
 export default MovieCard;
