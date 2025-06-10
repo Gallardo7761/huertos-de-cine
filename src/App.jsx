@@ -4,9 +4,11 @@ import Login from "@/pages/Login";
 import Votar from "@/pages/Votar";
 import NotFound from "@/pages/NotFound";
 import Footer from "@/components/Footer";
-import ProtectedRoute from "./components/Auth/ProtectedRoute";
-import { CONSTANTS } from "./util/constants";
-import FloatingMenu from "./components/FloatingMenu/FloatingMenu";
+import ProtectedRoute from "@/components/Auth/ProtectedRoute";
+import { CONSTANTS } from "@/util/constants";
+import FloatingMenu from "@/components/FloatingMenu/FloatingMenu";
+import IfRole from "@/components/Auth/IfRole";
+import Usuarios from "@/pages/Usuarios";
 
 const App = () => {
   return (
@@ -20,10 +22,17 @@ const App = () => {
           </ProtectedRoute>
         } />
         <Route path="/login" element={<Login />} />
+        <Route path="/usuarios" element={
+          <ProtectedRoute minimumRoles={[CONSTANTS.ROLE_ADMIN]}>
+            <Usuarios />
+          </ProtectedRoute>
+        } />
         <Route path="/*" element={<NotFound />} />
       </Routes>
       <Footer />
-      <FloatingMenu />
+      <IfRole roles={[CONSTANTS.ROLE_ADMIN]}>
+        <FloatingMenu />
+      </IfRole>
     </>
   )
 }

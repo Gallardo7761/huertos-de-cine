@@ -8,7 +8,7 @@
     --selective-yellow-light: #FFC526;
     --selective-yellow-dark: #D79600;
 
-    --text-color: var(--selective-yellow-light);
+    --text-color: var(--selective-yellow);
     --text-muted: #B0AFAF;
     --hover-color: var(--selective-yellow-dark);
 }
@@ -110,4 +110,82 @@ input:focus-visible {
 .modal-content {
   background-color: var(--cocoa-brown-light-1) !important;
   color: var(--text-color) !important;
+}
+
+/* ===================
+   SEARCH TOOLBAR
+=================== */
+.search-toolbar-wrapper {
+  position: sticky;
+  top: 64px;
+  z-index: 900;
+  margin-bottom: 2rem;
+}
+
+.search-toolbar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 0.5rem 1rem;
+  background-color: var(--cocoa-brown-light-2) ;
+  border: 2px solid var(--selective-yellow) !important;  
+}
+
+/* Cuando el input está enfocado */
+.search-toolbar:has(input:focus) {
+  transform: scale(1.02);
+  border-color: var(--selective-yellow-light) !important;
+}
+
+/* Fallback si :has no es compatible */
+.search-toolbar.focused {
+  transform: scale(1.02);
+  border-color: var(--selective-yellow-light) !important;
+}
+
+.search-toolbar input.search-input {
+  all: unset;
+  flex-grow: 1;
+  width: 100%;
+  height: 32px;
+  font-size: 1.1rem;
+  font-family: "Open Sans", sans-serif;
+  padding-right: 1rem;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.search-toolbar input.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-results {
+    border: none;
+    margin-top: 0.5rem;
+}
+
+.search-results h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.search-results p {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
 }

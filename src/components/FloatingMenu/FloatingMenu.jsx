@@ -3,16 +3,20 @@ import { motion as _motion, AnimatePresence } from "framer-motion";
 import "@/css/FloatingMenu.css";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import AddButton from "./AddButton";
 import AddMovieModal from "../Movies/AddMovieModal";
 import { useData } from "@/hooks/useData";
 import { useConfig } from "@/hooks/useConfig";
 import LoadingIcon from "@/components/LoadingIcon";
+import AddMovieButton from "./AddMovieButton";
+import AddUserButton from "./AddUserButton";
+import { useLocation } from "react-router-dom";
 
 const FloatingMenu = () => {
   const [open, setOpen] = useState(false);
-  const [modal, setModal] = useState(null);
+  const [movieModal, setMovieModal] = useState(null);
+  const [userModal, setUserModal] = useState(null);
   const { postData } = useData();
+  const location = useLocation();
 
   const { config, configLoading } = useConfig();
   if (configLoading) return <p><LoadingIcon /></p>;
@@ -30,9 +34,24 @@ const FloatingMenu = () => {
     exit: { opacity: 0, y: 10, transition: { duration: 0.1 } }
   };
 
-  const buttons = [
-    { component: <AddButton />, key: "add", onClick: () => setModal(true) }
-  ];
+  let buttons = [];
+
+  if (location.pathname.includes("/votar")) {
+    buttons.push({
+      component: <AddMovieButton />,
+      key: "add-movie",
+      onClick: () => setMovieModal(true)
+    });
+  }
+
+  if (location.pathname.includes("/usuarios")) {
+    buttons.push({
+      component: <AddUserButton />,
+      key: "add-user",
+      onClick: () => setUserModal(true)
+    });
+  }
+
 
   const sanitizeForSQL = (str) => {
     if (typeof str !== "string") return "";
@@ -111,7 +130,7 @@ const FloatingMenu = () => {
         )}
       </AnimatePresence>
 
-      <AddMovieModal show={modal} onClose={() => setModal(false)} onSubmit={handleMovieSubmit} />
+      <AddMovieModal show={movieModal} onClose={() => setMovieModal(false)} onSubmit={handleMovieSubmit} />
 
       <button className="menu-toggle" onClick={() => setOpen(prev => !prev)}>
         <FontAwesomeIcon icon={faEllipsisVertical} className="fa-2x" />

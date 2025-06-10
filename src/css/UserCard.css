@@ -1,0 +1,5 @@
+.user-card {
+  background-color: var(--cocoa-brown) !important;
+  border: none !important;
+  color: var(--selective-yellow) !important;
+}

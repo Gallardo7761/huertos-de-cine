@@ -1,0 +1,4 @@
+.user-container {
+    border: 2px solid var(--selective-yellow) !important;  
+    background-color: var(--cocoa-brown-light-2);
+}

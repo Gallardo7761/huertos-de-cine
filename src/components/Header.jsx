@@ -5,7 +5,9 @@ import IfAuthenticated from "@/components/Auth/IfAuthenticated";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartColumn, faSignOut } from '@fortawesome/free-solid-svg-icons';
+import { faChartColumn, faSignOut, faUsers } from '@fortawesome/free-solid-svg-icons';
+import IfRole from './Auth/IfRole';
+import { CONSTANTS } from '@/util/constants';
 
 const Header = () => {
     const { logout } = useAuth();
@@ -37,6 +39,12 @@ const Header = () => {
                             <FontAwesomeIcon icon={faChartColumn} className="me-2" />
                             votos
                         </Link>
+                        <IfRole roles={[CONSTANTS.ROLE_ADMIN]}>
+                            <Link to="/usuarios" className="nav-link p-0">
+                                <FontAwesomeIcon icon={faUsers} className="me-2" />
+                                usuarios
+                            </Link>
+                        </IfRole>
                     </div>
                 </Navbar>
             </IfAuthenticated>
