@@ -15,7 +15,7 @@ export const DateParser = {
       if (!isoString) return '—';
       
       const date = new Date(isoString);
-      if (isNaN(date)) return '—'; // Para proteger aún más por si llega basura
+      if (isNaN(date)) return '—';
     
       return new Intl.DateTimeFormat('es-ES', {
         day: '2-digit',

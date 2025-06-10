@@ -26,7 +26,7 @@ const PasswordInput = ({ value, onChange, name = "password" }) => {
           value={value}
           placeholder="Escribe tu contraseña"
           onChange={onChange}
-          className="rounded-4 pe-5" // padding-end para que no tape el texto
+          className="rounded-4 pe-5"
         />
 
         <Button

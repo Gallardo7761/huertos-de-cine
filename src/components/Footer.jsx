@@ -1,7 +1,7 @@
 const Footer = () => {
     return (
         <footer>
-            <div className="container mx-auto text-center">
+            <div className="container mx-auto text-center mt-5">
                 <p className="text-xs mt-2">
                     Hecho con ❤️ por <a href="https://gallardo.dev">Gallardo7761</a>
                 </p>

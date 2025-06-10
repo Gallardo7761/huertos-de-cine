@@ -1,0 +1,51 @@
+.movie-card {
+  background-color: var(--cocoa-brown-light-2) !important;
+  border: none !important;
+}
+
+.movie-card:hover {
+  scale: 1.01;
+  transition: all 0.2s ease-in-out;
+}
+
+.movie-card img {
+  cursor: pointer;
+}
+
+.movie-vote {
+  background-color: var(--cocoa-brown-light-3) !important;
+  font-size: 2.5rem !important;
+  border-top: 5px double var(--cocoa-brown-light-1) !important;
+}
+
+.vote-button {
+  color: var(--selective-yellow) !important;
+}
+
+.vote-button.active {
+  color: #fffc9a !important;
+}
+
+.movie-header {
+  border-bottom: 5px dashed var(--cocoa-brown-light-1) !important;
+  height: 2rem !important;
+}
+
+.vote-count {
+  color: var(--selective-yellow) !important;
+  font-weight: 600 !important;
+}
+
+.vote-button {
+  cursor: pointer !important;
+}
+
+.vote-button:hover {
+  filter: brightness(0.75) !important;
+}
+
+.movie-description {
+  color: var(--text-color) !important;
+  font-size: 1.1rem !important;
+  line-height: 1.4 !important;
+}

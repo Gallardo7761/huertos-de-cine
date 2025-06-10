@@ -1,7 +1,8 @@
 :root {
     --cocoa-brown: #332027;
-    --cocoa-brown-light-1: #46303A;
-    --cocoa-brown-light-2: #5A404D;
+    --cocoa-brown-light-1: #472d36;
+    --cocoa-brown-light-2: #5f444d;
+    --cocoa-brown-light-3: #6d4f59;
 
     --selective-yellow: #FCB500;
     --selective-yellow-light: #FFC526;
@@ -36,7 +37,12 @@ h6 {
 }
 
 body {
-  background-color: var(--cocoa-brown);
+  background-color: var(--cocoa-brown-light-1);
+}
+
+hr {
+  border: dashed 0.075rem white;
+  margin: 1rem 0;
 }
 
 /* ================================
@@ -76,4 +82,17 @@ input:focus-visible {
     0 0 0.25rem var(--selective-yellow-dark) !important;
   outline: none !important;
   background-color: var(--cocoa-brown-light-2);
+}
+
+.modal-header {
+  border-bottom: none !important;
+  background-color: var(--cocoa-brown-light-2) !important;
+  color: var(--text-color) !important;
+  font-weight: 600 !important;
+  font-size: 1.5rem !important;
+}
+
+.modal-content {
+  background-color: var(--cocoa-brown-light-1) !important;
+  color: var(--text-color) !important;
 }

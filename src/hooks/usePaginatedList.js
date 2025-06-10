@@ -23,7 +23,7 @@ export const usePaginatedList = ({
       .filter((item) => filterFn(item, filters))
       .filter((item) => searchFn(item, searchTerm));
     if (sortFn) {
-      result = [...result].sort(sortFn); // 👈 Ordena si hay sortFn
+      result = [...result].sort(sortFn);
     }
     return result;
   }, [data, filterFn, filters, searchFn, searchTerm, sortFn]);
@@ -35,7 +35,7 @@ export const usePaginatedList = ({
     setSearchTerm,
     filters,
     setFilters,
-    loaderRef: useRef(), // opcional si tu PaginatedCardGrid lo espera
+    loaderRef: useRef(),
     loading: false,
     hasMore: false,
     creatingItem,
@@ -43,6 +43,6 @@ export const usePaginatedList = ({
     tempItem,
     setTempItem,
     isUsingFilters: usingSearchOrFilters,
-    resetPagination: () => { } // ya no es necesario pero por compat
+    resetPagination: () => { }
   };
 };
