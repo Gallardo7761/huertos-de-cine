@@ -7,6 +7,8 @@ import { useData } from '@/hooks/useData';
 import { useConfig } from '@/hooks/useConfig';
 import { Button, Form, Alert } from 'react-bootstrap';
 import FileUpload from '@/components/FileUpload';
+import IfRole from '../Auth/IfRole';
+import { CONSTANTS } from '@/util/constants';
 
 const MovieCard = ({ movie_id, title, description, cover }) => {
   const [modal, setModal] = useState(false);
@@ -127,18 +129,20 @@ const MovieCard = ({ movie_id, title, description, cover }) => {
   return (
     <>
       <div className="movie-card rounded-4 card m-0 p-0 col-md-4 col-xl-2 shadow-sm">
-        <div className="d-flex m-0 p-0 position-absolute top-0 end-0">
-          <button className="btn btn-primary edit-button"
-            onClick={() => setEditModal(true)}
-          >
-            <FontAwesomeIcon icon={faEdit} className='fa-lg' />
-          </button>
-          <button className="btn btn-danger delete-button"
-            onClick={handleDelete}
-          >
-            <FontAwesomeIcon icon={faTrash} className='fa-lg' />
-          </button>
-        </div>
+        <IfRole roles={[CONSTANTS.ROLE_ADMIN]}>
+          <div className="d-flex m-0 p-0 position-absolute top-0 end-0">
+            <button className="btn btn-primary edit-button"
+              onClick={() => setEditModal(true)}
+            >
+              <FontAwesomeIcon icon={faEdit} className='fa-lg' />
+            </button>
+            <button className="btn btn-danger delete-button"
+              onClick={handleDelete}
+            >
+              <FontAwesomeIcon icon={faTrash} className='fa-lg' />
+            </button>
+          </div>
+        </IfRole>
         <img
           src={cover}
           alt={`Cartel de ${title}`}

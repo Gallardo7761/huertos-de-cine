@@ -22,7 +22,8 @@
             "viewers": {
                 "getAll": "/viewers",
                 "getById": "/viewers/:viewer_id",
-                "getVotesByUserAndMovieId": "/viewers/:viewer_id/votes/:movie_id"
+                "getVotesByUserAndMovieId": "/viewers/:viewer_id/votes/:movie_id",
+                "metadata": "/viewers/metadata"
             },
             "files": {
                 "all": "/files",
@@ -30,6 +31,16 @@
                 "upload": "/files/upload",
                 "download": "/files/download/:file_id",
                 "userFiles": "/files/myfiles"
+            },
+            "users": {
+                "getAll": "/users",
+                "getById": "/users/:user_id",
+                "getStatus": "/users/:user_id/status",
+                "getRole": "/users/:user_id/role",
+                "checkExists": "/users/:user_id/exists",
+                "getAvatar": "/users/:user_id/avatar",
+                "updateAvatar": "/users/:user_id/avatar",
+                "getSelfInfo": "/users/me"
             }
         }
     }

@@ -32,16 +32,12 @@ const VotarContent = () => {
   const [showAlert, setShowAlert] = useState(!alertShown);
 
   useEffect(() => {
-    if (alertShown) return;
+    if (!showAlert) return;
 
-    const timer = setTimeout(() => {
-      localStorage.setItem('alertShown', 'true');
-      setAlertShown(true);
-      setShowAlert(true);
-    }, 2000);
+    localStorage.setItem('alertShown', 'true');
+    setAlertShown(true);
 
-    return () => clearTimeout(timer);
-  }, [alertShown]);
+  }, [showAlert]);
 
   const handleCloseAlert = () => {
     setShowAlert(false);

@@ -5,11 +5,11 @@ export const useData = (config) => {
   const [data, setData] = useState(null);
   const [dataLoading, setLoading] = useState(true);
   const [dataError, setError] = useState(null);
-  const configRef = useRef();
+  const configRef = useRef(config); // inicializa directamente
 
   useEffect(() => {
     if (config?.baseUrl) {
-      configRef.current = config;
+      configRef.current = config; // actualiza la referencia al nuevo config
     }
   }, [config]);
 
@@ -19,7 +19,7 @@ export const useData = (config) => {
   });
 
   const fetchData = useCallback(async () => {
-    const current = configRef.current;
+    const current = configRef.current; // usa el ref más actualizado
     if (!current?.baseUrl) return;
 
     setLoading(true);
@@ -36,13 +36,19 @@ export const useData = (config) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []); // <- sin dependencias porque usamos configRef y funciones puras
 
+  // este useEffect se ejecuta una vez al montar o cuando cambie el config.baseUrl
   useEffect(() => {
     if (config?.baseUrl) {
-      fetchData();
+      fetchData(); // safe: fetchData está memoizado
     }
-  }, [config, fetchData]);
+  }, [config?.baseUrl, fetchData]); // <- dependencia estable y limpia
+
+  // función pública para forzar refetch
+  const refetch = () => {
+    fetchData();
+  };
 
   const getData = async (url, params = {}) => {
     try {
@@ -57,7 +63,7 @@ export const useData = (config) => {
         error: err.response?.data?.message || err.message,
       };
     }
-  };  
+  };
 
   const postData = async (endpoint, payload) => {
     const headers = {
@@ -80,16 +86,14 @@ export const useData = (config) => {
     } catch (err) {
       const raw = err.response?.data?.message;
       let parsed = {};
-  
       try {
         parsed = JSON.parse(raw);
       } catch {
         return { data: null, errors: { general: raw || err.message } };
       }
-  
       return { data: null, errors: parsed };
     }
-  };  
+  };
 
   const putData = async (endpoint, payload) => {
     const response = await axios.put(endpoint, payload, {
@@ -126,5 +130,6 @@ export const useData = (config) => {
     putData,
     deleteData,
     deleteDataWithBody,
+    refetch, // el refetch usable desde fuera
   };
 };

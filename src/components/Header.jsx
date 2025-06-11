@@ -34,7 +34,8 @@ const Header = () => {
                         </Link>
                     }
                 >
-                    <div className="d-flex m-0 p-0 gap-5">
+                    <div className="d-flex m-0 p-0 gap-5 align-items-center">
+                        <span className='user-name'>{`@${JSON.parse(localStorage.getItem("user"))?.user_name}`}</span>
                         <Link to="/votar" className="nav-link p-0">
                             <FontAwesomeIcon icon={faChartColumn} className="me-2" />
                             votos

@@ -4,17 +4,21 @@ import "@/css/FloatingMenu.css";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddMovieModal from "../Movies/AddMovieModal";
+import AddUserModal from "../Users/AddUserModal";
 import { useData } from "@/hooks/useData";
 import { useConfig } from "@/hooks/useConfig";
 import LoadingIcon from "@/components/LoadingIcon";
 import AddMovieButton from "./AddMovieButton";
 import AddUserButton from "./AddUserButton";
 import { useLocation } from "react-router-dom";
+import NotificationModal from "@/components/NotificationModal";
 
 const FloatingMenu = () => {
   const [open, setOpen] = useState(false);
   const [movieModal, setMovieModal] = useState(null);
   const [userModal, setUserModal] = useState(null);
+  const [postNotifModal, setPostNotifModal] = useState(false);
+  const [newUserName, setNewUserName] = useState("");
   const { postData } = useData();
   const location = useLocation();
 
@@ -66,7 +70,7 @@ const FloatingMenu = () => {
 
   const handleMovieSubmit = async (data) => {
 
-    // Cover upload logic =================
+    // Lógica subir portada =================
     const file = data.coverFile;
     const file_name = file.name;
     const mime_type = file.type || "application/octet-stream";
@@ -103,39 +107,82 @@ const FloatingMenu = () => {
 
   }
 
+  const handleUserSubmit = async (data) => {
+    const userData = {
+      display_name: sanitizeForSQL(data.display_name),
+      password: data.password,
+      status: data.status,
+      role: data.role,
+      global_status: data.global_status,
+      global_role: data.global_role
+    };
+
+    try {
+      const postResponse = await postData(
+        `${config.apiConfig.baseRawUrl}${config.apiConfig.endpoints.viewers.getAll}`,
+        userData
+      );
+
+      const newUserName = postResponse?.user_name || "usuario";
+      setNewUserName(newUserName);
+      setPostNotifModal(true);
+      setUserModal(false);
+
+    } catch (err) {
+      console.error("Error al añadir usuario:", err);
+    }
+  }
+
   return (
-    <div className="floating-menu">
-      <AnimatePresence>
-        {open && (
-          <_motion.div
-            className="menu-buttons"
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-          >
-            {buttons.map((btn, i) => (
-              <_motion.div
-                key={btn.key}
-                custom={i}
-                variants={buttonVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                onClick={btn.onClick}
-              >
-                {btn.component}
-              </_motion.div>
-            ))}
-          </_motion.div>
-        )}
-      </AnimatePresence>
+    <>
+      <div className="floating-menu">
+        <AnimatePresence>
+          {open && (
+            <_motion.div
+              className="menu-buttons"
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+            >
+              {buttons.map((btn, i) => (
+                <_motion.div
+                  key={btn.key}
+                  custom={i}
+                  variants={buttonVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  onClick={btn.onClick}
+                >
+                  {btn.component}
+                </_motion.div>
+              ))}
+            </_motion.div>
+          )}
+        </AnimatePresence>
 
-      <AddMovieModal show={movieModal} onClose={() => setMovieModal(false)} onSubmit={handleMovieSubmit} />
+        <AddMovieModal show={movieModal} onClose={() => setMovieModal(false)} onSubmit={handleMovieSubmit} />
+        <AddUserModal show={userModal} onClose={() => setUserModal(false)} onSubmit={handleUserSubmit} />
 
-      <button className="menu-toggle" onClick={() => setOpen(prev => !prev)}>
-        <FontAwesomeIcon icon={faEllipsisVertical} className="fa-2x" />
-      </button>
-    </div>
+        <button className="menu-toggle" onClick={() => setOpen(prev => !prev)}>
+          <FontAwesomeIcon icon={faEllipsisVertical} className="fa-2x" />
+        </button>
+      </div>
+      <NotificationModal
+        show={postNotifModal}
+        onClose={() => setPostNotifModal(false)}
+        title="Usuario añadido"
+        message={`El usuario ${newUserName} ha sido añadido correctamente`}
+        variant="success"
+        buttons={[
+          {
+            label: 'Aceptar',
+            variant: 'success',
+            onClick: () => setPostNotifModal(false)
+          }
+        ]}
+      />
+    </>
   );
 };
 

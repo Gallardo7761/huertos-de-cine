@@ -112,6 +112,11 @@ input:focus-visible {
   color: var(--text-color) !important;
 }
 
+.modal-footer {
+  border-top: none !important;
+  background-color: var(--cocoa-brown-light-1) !important;
+}
+
 /* ===================
    SEARCH TOOLBAR
 =================== */
