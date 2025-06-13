@@ -34,20 +34,23 @@ const Header = () => {
                         </Link>
                     }
                 >
-                    <div className="d-flex m-0 p-0 gap-5 align-items-center">
-                        <span className='user-name'>{`@${JSON.parse(localStorage.getItem("user"))?.user_name}`}</span>
+                    <li className="nav-item user-name nav-link p-0">{`@${JSON.parse(localStorage.getItem("user"))?.user_name}`}</li>
+                    <li className="nav-item">
                         <Link to="/votar" className="nav-link p-0">
                             <FontAwesomeIcon icon={faChartColumn} className="me-2" />
                             votos
                         </Link>
-                        <IfRole roles={[CONSTANTS.ROLE_ADMIN]}>
+                    </li>
+                    <IfRole roles={[CONSTANTS.ROLE_ADMIN]}>
+                        <li className="nav-item">
                             <Link to="/usuarios" className="nav-link p-0">
                                 <FontAwesomeIcon icon={faUsers} className="me-2" />
                                 usuarios
                             </Link>
-                        </IfRole>
-                    </div>
+                        </li>
+                    </IfRole>
                 </Navbar>
+
             </IfAuthenticated>
         </>
     );
