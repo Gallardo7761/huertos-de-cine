@@ -6,10 +6,12 @@ import net.miarma.backend.huertosdecine.mapper.MovieMapper;
 import net.miarma.backend.huertosdecine.mapper.VoteMapper;
 import net.miarma.backend.huertosdecine.model.Movie;
 import net.miarma.backend.huertosdecine.model.Vote;
+import net.miarma.backend.huertosdecine.security.CinePrincipal;
 import net.miarma.backend.huertosdecine.service.MovieService;
 import net.miarma.backend.huertosdecine.service.VoteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,35 +31,34 @@ public class MovieController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('CINE_ROLE_ADMIN', 'CINE_ROLE_DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
     public ResponseEntity<MovieDto.Response> create(@RequestBody MovieDto.Request request) {
         Movie entity = MovieMapper.toEntity(request);
         return ResponseEntity.ok(MovieMapper.toResponse(service.create(entity)));
     }
 
     @GetMapping
-    public ResponseEntity<List<MovieDto.Response>> getAll(
-            @RequestHeader(value = "X-User-Id", required = false) UUID userId
-    ) {
-        return ResponseEntity.ok(service.getAllWithVotes(userId));
+    public ResponseEntity<List<MovieDto.Response>> getAll() {
+        CinePrincipal principal = (CinePrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(service.getAllWithVotes(principal.getUserId()));
     }
 
     @GetMapping("/{movieId}")
     public ResponseEntity<MovieDto.Response> getById(
-            @PathVariable("movieId") UUID movieId,
-            @RequestHeader(value = "X-User-Id", required = false) UUID userId
+            @PathVariable("movieId") UUID movieId
     ) {
-        MovieDto.Response details = service.getMovieWithVotes(movieId, userId);
+        CinePrincipal principal = (CinePrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MovieDto.Response details = service.getMovieWithVotes(movieId, principal.getUserId());
         return ResponseEntity.ok(details);
     }
 
     @PostMapping("/{movieId}/upvote")
     public ResponseEntity<VoteDto.Response> upvote(
-        @PathVariable("movieId") UUID movieId,
-        @RequestHeader("X-User-Id") UUID userId
+        @PathVariable("movieId") UUID movieId
     ) {
+        CinePrincipal principal = (CinePrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         VoteDto.Request req = new VoteDto.Request();
-        req.setUserId(userId);
+        req.setUserId(principal.getUserId());
         req.setMovieId(movieId);
         req.setVote((byte) 1);
         Vote vote = service.vote(VoteMapper.toEntity(req));
@@ -66,11 +67,11 @@ public class MovieController {
 
     @PostMapping("/{movieId}/downvote")
     public ResponseEntity<VoteDto.Response> downvote(
-        @PathVariable("movieId") UUID movieId,
-        @RequestHeader("X-User-Id") UUID userId
+        @PathVariable("movieId") UUID movieId
     ) {
+        CinePrincipal principal = (CinePrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         VoteDto.Request req = new VoteDto.Request();
-        req.setUserId(userId);
+        req.setUserId(principal.getUserId());
         req.setMovieId(movieId);
         req.setVote((byte) -1);
         Vote vote = service.vote(VoteMapper.toEntity(req));
@@ -78,7 +79,7 @@ public class MovieController {
     }
 
     @PutMapping("/{movieId}")
-    @PreAuthorize("hasAnyRole('CINE_ROLE_ADMIN', 'CINE_ROLE_DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
     public ResponseEntity<MovieDto.Response> update(
             @PathVariable("movieId") UUID movieId,
             @RequestBody MovieDto.Request changes
@@ -89,7 +90,7 @@ public class MovieController {
     }
 
     @DeleteMapping("/{movieId}")
-    @PreAuthorize("hasAnyRole('CINE_ROLE_ADMIN', 'CINE_ROLE_DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
     public ResponseEntity<Map<String,String>> delete(
             @PathVariable("movieId") UUID movieId
     ) {

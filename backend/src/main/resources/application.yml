@@ -34,7 +34,8 @@ jwt:
 logging:
   level:
     root: INFO
-    org.springframework.security: INFO
+    net.miarma.backend.huertosdecine: WARN
+    org.springframework.security: WARN
     org.hibernate.SQL: WARN
     org.hibernate.orm.jdbc.bind: WARN
 

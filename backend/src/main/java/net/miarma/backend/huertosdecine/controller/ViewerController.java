@@ -21,20 +21,20 @@ public class ViewerController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('CINE_ROLE_ADMIN', 'CINE_ROLE_DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
     public ResponseEntity<List<ViewerDto>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{userId}")
-    @PreAuthorize("hasAnyRole('CINE_ROLE_ADMIN', 'CINE_ROLE_DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
     public ResponseEntity<ViewerDto> getById(@PathVariable("userId") UUID userId) {
         ViewerDto viewer = service.getById(userId);
         return ResponseEntity.ok(viewer);
     }
 
     @PutMapping("/{userId}")
-    @PreAuthorize("hasAnyRole('CINE_ROLE_ADMIN', 'CINE_ROLE_DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
     public ResponseEntity<ViewerDto> update(
             @PathVariable("userId") UUID userId,
             @RequestBody ViewerDto changes
@@ -44,7 +44,7 @@ public class ViewerController {
     }
 
     @PostMapping("/{userId}/status")
-    @PreAuthorize("hasAnyRole('CINE_ROLE_ADMIN', 'CINE_ROLE_DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
     public ResponseEntity<StatusDto> updateStatus(
             @PathVariable("userId") UUID userId,
             @RequestBody StatusDto status

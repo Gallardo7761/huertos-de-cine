@@ -38,7 +38,7 @@ public class CinePrincipal implements UserDetails {
             default -> "USER";
         };
 
-        auth.add(new SimpleGrantedAuthority("ROLE_CINE_ROLE_" + roleName));
+        auth.add(new SimpleGrantedAuthority("ROLE_" + roleName));
 
         return auth;
     }

@@ -31,7 +31,7 @@ public class RequestController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('CINE_ROLE_ADMIN', 'CINE_ROLE_DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
     public ResponseEntity<List<RequestDto.Response>> getAll() {
         return ResponseEntity.ok(service.getAll().stream()
                 .map(RequestMapper::toResponse)
@@ -39,7 +39,7 @@ public class RequestController {
     }
 
     @GetMapping("/{requestId}")
-    @PreAuthorize("hasAnyRole('CINE_ROLE_ADMIN', 'CINE_ROLE_DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
     public ResponseEntity<RequestDto.Response> getById(
         @PathVariable("requestId") UUID requestId
     ) {
@@ -47,14 +47,14 @@ public class RequestController {
     }
 
     @PostMapping("/{requestId}/accept")
-    @PreAuthorize("hasAnyRole('CINE_ROLE_ADMIN', 'CINE_ROLE_DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
     public ResponseEntity<RequestDto.Response> accept(@PathVariable("requestId") UUID requestId) {
         Request accepted = acceptanceService.acceptRequest(requestId);
         return ResponseEntity.ok(RequestMapper.toResponse(accepted));
     }
 
     @PostMapping("/{requestId}/reject")
-    @PreAuthorize("hasAnyRole('CINE_ROLE_ADMIN', 'CINE_ROLE_DEV')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEV')")
     public ResponseEntity<RequestDto.Response> reject(@PathVariable("requestId") UUID requestId) {
         Request rejected = acceptanceService.rejectRequest(requestId);
         return ResponseEntity.ok(RequestMapper.toResponse(rejected));
