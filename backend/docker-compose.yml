@@ -6,7 +6,7 @@ services:
     user: "${UID}:${GID}"
     ports:
       - "127.0.0.1:10003:10003"
-      - "127.0.0.1:5006:5006"
+      - "127.0.0.1:5008:5008"
     networks:
       - backend-dev-net
     volumes:
