@@ -29,10 +29,7 @@ const Votar = () => {
 
   const reqConfig = {
     baseUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.movies.all}`,
-    params: {},
-    headers: {
-      "X-User-Id": userId
-    }
+    params: {}
   };
 
   return (
@@ -54,7 +51,7 @@ const VotarContent = () => {
     const url = `${config.apiConfig.baseUrl}/movies/${movieId}/${action}`;
 
     try {
-      await postData(url, {}, true, { "X-User-Id": userId });
+      await postData(url, {}, true, {});
     } catch (err) {
       console.error(`Error al votar:`, err);
     }
