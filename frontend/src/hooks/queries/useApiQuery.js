@@ -11,8 +11,10 @@ const getAuthHeaders = () => {
 };
 
 export const useApiQuery = (queryKey, url, params = {}, options = {}) => {
+  const normalizedKey = Array.isArray(queryKey) ? queryKey : [queryKey];
+
   return useQuery({
-    queryKey: [queryKey, url, params],
+    queryKey: [...normalizedKey, url, params],
     queryFn: async () => {
       const headers = getAuthHeaders();
       try {

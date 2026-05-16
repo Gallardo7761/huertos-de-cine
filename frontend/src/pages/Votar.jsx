@@ -1,24 +1,15 @@
 import LoadingIcon from "@/components/LoadingIcon";
 import MovieCard from "@/components/Movies/MovieCard";
 
-import { DataProvider } from "@/context/DataContext";
-
-import { useDataContext } from "@/hooks/useDataContext";
 import { useConfig } from "@/hooks/useConfig";
 import { Alert } from "react-bootstrap";
 
-import { useState } from "react";
 import { useError } from "@/context/ErrorContext";
 import "@/css/Votar.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-
-const identity = JSON.parse(localStorage.getItem('identity') || '{}');
-const userId = identity.user?.userId || identity.userId;
+import { useVotes } from "@/hooks/queries/useVotes";
 
 const Votar = () => {
   const { config, configLoading } = useConfig();
-  const { showError } = useError();
 
   if (configLoading) return (
     <section className="text-center py-5" role="status" aria-live="polite" aria-label="Cargando películas">
@@ -32,15 +23,12 @@ const Votar = () => {
     params: {}
   };
 
-  return (
-    <DataProvider config={reqConfig} onError={showError}>
-      <VotarContent />
-    </DataProvider>
-  );
+  return <VotarContent reqConfig={reqConfig} />;
 }
 
-const VotarContent = () => {
-  const { data, dataLoading, dataError, postData, putData, deleteData } = useDataContext();
+const VotarContent = ({ reqConfig }) => {
+  const { showError } = useError();
+  const { data, dataLoading, dataError, postData } = useVotes(reqConfig.baseUrl, {}, showError, ['votes', 'movies', 'dashboard']);
   const { config } = useConfig();
   const movies = Array.isArray(data) ? data : [];
 
@@ -51,29 +39,9 @@ const VotarContent = () => {
     const url = `${config.apiConfig.baseUrl}/movies/${movieId}/${action}`;
 
     try {
-      await postData(url, {}, true, {});
+      await postData(url, {});
     } catch (err) {
       console.error(`Error al votar:`, err);
-    }
-  };
-
-  const handleEdit = async (movieId, formData) => {
-    if (!config) return;
-    const url = `${config.apiConfig.baseUrl}/movies/${movieId}`;
-    try {
-      await putData(url, formData, true);
-    } catch (err) {
-      console.error("Error al editar película:", err);
-    }
-  };
-
-  const handleDelete = async (movieId) => {
-    if (!config) return;
-    const url = `${config.apiConfig.baseUrl}/movies/${movieId}`;
-    try {
-      await deleteData(url, true);
-    } catch (err) {
-      console.error("Error al borrar película:", err);
     }
   };
 
@@ -113,8 +81,6 @@ const VotarContent = () => {
                   downvotes={movie.downvotes}
                   userVote={movie.userVote}
                   onVote={handleVote}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
                 />
               </div>
             ))

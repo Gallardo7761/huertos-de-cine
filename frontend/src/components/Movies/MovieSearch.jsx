@@ -1,34 +1,37 @@
 import { useEffect, useRef, useState } from 'react';
 import { searchMovies, getImageUrl } from '@/services/tmdbService';
 import '@/css/MovieSearch.css';
+import { useDebounce } from '@/hooks/useDebounce';
 
 const MovieSearch = ({ onSelect }) => {
     const [query, setQuery] = useState('');
+    const debouncedQuery = useDebounce(query, 300);
     const [results, setResults] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const searchRef = useRef(null);
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (searchRef.current && !searchRef.current.contains(event.target)) {
+        const fetchMovies = async () => {
+            if (debouncedQuery.length > 2) {
+                setIsLoading(true);
+                try {
+                    const movies = await searchMovies(debouncedQuery);
+                    setResults(movies);
+                } catch (error) {
+                    console.error("Error buscando pelis:", error);
+                } finally {
+                    setIsLoading(false);
+                }
+            } else {
                 setResults([]);
             }
         };
 
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
+        fetchMovies();
+    }, [debouncedQuery]);
 
-    const handleSearch = async (e) => {
-        const val = e.target.value;
-        setQuery(val);
-        if (val.length > 2) {
-            const movies = await searchMovies(val);
-            setResults(movies);
-        } else {
-            setResults([]);
-        }
+    const handleInputChange = (e) => {
+        setQuery(e.target.value);
     };
 
     const selectMovie = (m) => {
@@ -48,9 +51,10 @@ const MovieSearch = ({ onSelect }) => {
                 className="form-control themed-input"
                 placeholder="Buscar en TMDB..."
                 value={query}
-                onChange={handleSearch}
-                onFocus={handleSearch}
+                onChange={handleInputChange}
             />
+
+            {isLoading && <div className="p-2 text-muted">Buscando...</div>}
 
             {results.length > 0 && (
                 <div className="tmdb-results-list shadow-lg">

@@ -1,10 +1,8 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import UserCard from "@/components/Users/UserCard";
 import MovieCard from "@/components/Movies/MovieCard";
 import LoadingIcon from "@/components/LoadingIcon";
-import { DataProvider } from "@/context/DataContext";
 import { useConfig } from "@/hooks/useConfig";
-import { useDataContext } from "@/hooks/useDataContext";
 import { useError } from "@/context/ErrorContext";
 import { Alert } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,10 +12,12 @@ import '@/css/Admin.css';
 import '@/css/MovieCard.css';
 import MovieForm from "@/components/Movies/MovieForm";
 import MovieSearch from "@/components/Movies/MovieSearch";
+import { useDashboard } from "@/hooks/queries/useDashboard";
+import { useMovies } from "@/hooks/queries/useMovies";
+import { useViewers } from "@/hooks/queries/useViewers";
 
 const Admin = () => {
     const { config, configLoading } = useConfig();
-    const { showError } = useError();
 
     if (configLoading) return (
         <section className="text-center py-5" role="status">
@@ -28,19 +28,25 @@ const Admin = () => {
 
     const reqConfig = {
         baseUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.admin.dashboard}`,
+        acceptRequestUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.requests.accept}`,
+        rejectRequestUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.requests.reject}`,
+        moviesUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.movies.all}`,
+        viewersUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.viewers.all}`,
         params: {},
     };
 
-    return (
-        <DataProvider config={reqConfig} onError={showError}>
-            <AdminContent />
-        </DataProvider>
-    );
+    return <AdminContent reqConfig={reqConfig} />;
 }
 
-const AdminContent = () => {
-    const { data, dataLoading, dataError, postData, putData, deleteData } = useDataContext();
-    const { config } = useConfig();
+const AdminContent = ({ reqConfig }) => {
+    const { showError } = useError();
+
+    const { data, dataLoading, dataError, postData: handleRequest } = useDashboard(reqConfig.baseUrl, {}, showError);
+    
+    const { postData: addMovie, putData: editMovie, deleteData: deleteMovie } = useMovies(reqConfig.moviesUrl, {}, showError, ['dashboard', 'movies']);
+
+    const { postData: deleteViewer } = useViewers(reqConfig.viewersUrl, {}, showError, ['dashboard', 'viewers']);
+
     const [showAddModal, setShowAddModal] = useState(false);
     const [tmdbSelection, setTmdbSelection] = useState(null);
 
@@ -51,37 +57,36 @@ const AdminContent = () => {
     const pendingRequests = requests.filter(req => req.status === 0);
     const activeViewers = viewers.filter(viewer => viewer.account?.status === 1);
 
-    const getUrl = (path) => `${config.apiConfig.baseUrl}${path}`;
-
     const handleAcceptRequest = async (requestId) => {
-        const endpoint = config.apiConfig.endpoints.requests.accept.replace(':requestId', requestId);
-        await postData(getUrl(endpoint), {});
+        const url = reqConfig.acceptRequestUrl.replace(':requestId', requestId);
+        await handleRequest(url, {});
     };
 
     const handleRejectRequest = async (requestId) => {
-        const endpoint = config.apiConfig.endpoints.requests.reject.replace(':requestId', requestId);
-        await postData(getUrl(endpoint), {});
+        const url = reqConfig.rejectRequestUrl.replace(':requestId', requestId);
+        await handleRequest(url, {});
     };
 
     const handleAddMovie = async (formData) => {
-        const endpoint = config.apiConfig.endpoints.movies.all;
-        await postData(getUrl(endpoint), formData);
+        const url = reqConfig.moviesUrl;
+        await addMovie(url, formData);
+        setTmdbSelection(null);
         setShowAddModal(false);
     };
 
     const handleEditMovie = async (movieId, formData) => {
-        const endpoint = config.apiConfig.endpoints.movies.all + `/${movieId}`;
-        await putData(getUrl(endpoint), formData);
+        const url = reqConfig.moviesUrl + `/${movieId}`;
+        await editMovie(url, formData);
     };
 
     const handleDeleteMovie = async (movieId) => {
-        const endpoint = config.apiConfig.endpoints.movies.all + `/${movieId}`;
-        await deleteData(getUrl(endpoint));
+        const url = reqConfig.moviesUrl + `/${movieId}`;
+        await deleteMovie(url);
     };
 
     const handleDeleteViewer = async (identity) => {
-        const endpoint = config.apiConfig.endpoints.viewers.status.replace(':userId', identity.user.userId);
-        await postData(getUrl(endpoint), {
+        const url = reqConfig.viewersUrl + `/${identity.user.userId}/status`;
+        await deleteViewer(url, {
             status: 0
         });
     };

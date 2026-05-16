@@ -8,3 +8,4 @@
 /backend/.idea/
 /backend/target/
 /backend/.env
+/backend/*.iml

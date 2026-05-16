@@ -11,12 +11,12 @@ import { useConfig } from '@/hooks/useConfig';
 import { useState } from 'react';
 import CustomModal from './CustomModal';
 import RequestForm from './Requests/RequestForm';
-import { useData } from '@/hooks/useData';
+import { useRequests } from '@/hooks/queries/useRequests';
 
 const Header = () => {
     const { logout } = useAuth();
     const { config } = useConfig();
-    const { postData } = useData();
+    const { postData } = useRequests();
     const navigate = useNavigate();
 
     const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -31,7 +31,7 @@ const Header = () => {
     const handleSendRequest = async (formData) => {
         try {
             const url = `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.requests.all}`;
-            await postData(url, formData);
+            await postData( url, formData, false);
             setShowRegisterModal(false);
             
             alert("Solicitud enviada");

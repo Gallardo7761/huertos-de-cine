@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 /* COMPONENTS */
 import App from './App.jsx'
@@ -13,8 +14,6 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import '@/css/index.css'
 import { ErrorProvider } from '@/context/ErrorContext.jsx'
 
-import { QueryClient } from '@tanstack/react-query'
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -26,14 +25,16 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ConfigProvider>
-      <ErrorProvider>
-        <AuthProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </AuthProvider>
-      </ErrorProvider>
-    </ConfigProvider>
+    <QueryClientProvider client={queryClient}>
+      <ConfigProvider>
+        <ErrorProvider>
+          <AuthProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </AuthProvider>
+        </ErrorProvider>
+      </ConfigProvider>
+    </QueryClientProvider>
   </StrictMode>,
 )

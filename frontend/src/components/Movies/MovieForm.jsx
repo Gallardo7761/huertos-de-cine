@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Form, Button, Alert, Image } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenFancy, faAlignCenter, faImage, faSave, faCancel, faLink } from '@fortawesome/free-solid-svg-icons';
+import { faPenFancy, faAlignCenter, faSave, faCancel, faLink } from '@fortawesome/free-solid-svg-icons';
 
 const MovieForm = ({ initialData, onSubmit, onCancel }) => {
   const [title, setTitle] = useState(initialData?.title || "");

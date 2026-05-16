@@ -8,7 +8,7 @@ const fetchDataGeneric = async (url) => {
   };
   const response = await axios.get(url, { headers });
   return response.data;
-};
+}
 
 const fetchDataWithBlob = async (url) => {
   const token = localStorage.getItem('token');
@@ -61,6 +61,23 @@ const handleAxiosError = (err) => {
     path: null,
     timestamp: new Date().toISOString(),
   };
-};
+}
 
-export { fetchDataGeneric, fetchDataWithBlob, handleAxiosError }
+const invalidateKeys = async (queryClient, refreshKeys) => {
+  if (!queryClient || !refreshKeys) return;
+
+  const keysToInvalidate = Array.isArray(refreshKeys) ? refreshKeys : [refreshKeys];
+
+  for (const key of keysToInvalidate) {
+    try {
+      await queryClient.invalidateQueries({
+        queryKey: [key],
+        exact: false
+      });
+    } catch (err) {
+      console.error(`Error invalidando la key: ${key}`, err);
+    }
+  }
+}
+
+export { fetchDataGeneric, fetchDataWithBlob, handleAxiosError, invalidateKeys }
