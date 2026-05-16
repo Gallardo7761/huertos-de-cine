@@ -13,6 +13,17 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import '@/css/index.css'
 import { ErrorProvider } from '@/context/ErrorContext.jsx'
 
+import { QueryClient } from '@tanstack/react-query'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 10,  // 10 minutes
+    },
+  },
+});
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ConfigProvider>
