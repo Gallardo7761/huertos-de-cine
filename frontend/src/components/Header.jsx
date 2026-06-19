@@ -3,43 +3,15 @@ import { Link } from 'react-router-dom';
 import Navbar from "@/components/NavBar";
 import IfAuthenticated from "@/components/Auth/IfAuthenticated";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from 'react-router-dom';
 import IfRole from '@/components/Auth/IfRole';
-import { CONSTANTS } from '@/util/constants';
 import IfNotAuthenticated from './Auth/IfNotAuthenticated';
-import { useConfig } from '@/hooks/useConfig';
-import { useState } from 'react';
-import CustomModal from './CustomModal';
-import RequestForm from './Requests/RequestForm';
-import { useRequests } from '@/hooks/queries/useRequests';
 
 const Header = () => {
-    const { logout } = useAuth();
-    const { config } = useConfig();
-    const { postData } = useRequests();
-    const navigate = useNavigate();
-
-    const [showRegisterModal, setShowRegisterModal] = useState(false);
-
-    const identity = JSON.parse(localStorage.getItem("identity")) ?? "invitado";
+    const { user, logout } = useAuth();
 
     const handleLogout = () => {
         logout();
-        navigate('/login', { replace: true });
     }
-
-    const handleSendRequest = async (formData) => {
-        try {
-            const url = `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.requests.all}`;
-            await postData( url, formData, false);
-            setShowRegisterModal(false);
-            
-            alert("Solicitud enviada");
-        } catch (error) {
-            console.error("Error al enviar solicitud:", error);
-            alert("Error al enviar solicitud");
-        }
-    };
 
     return (
         <>
@@ -53,50 +25,36 @@ const Header = () => {
                     <div className='d-flex m-0 p-0 gap-4 flex-column flex-lg-row align-items-lg-center'>
                         <IfAuthenticated>
                             <li className="nav-item">
-                                <Link to="/" className="nav-link p-0">
+                                <Link to="/votar" className="nav-link p-0">
                                     votos
                                 </Link>
                             </li>
-                            <IfRole roles={[CONSTANTS.ROLE_ADMIN, CONSTANTS.ROLE_DEV]}>
+                            <IfRole roles={['ADMIN']}>
                                 <li className="nav-item">
                                     <Link to="/admin" className="nav-link p-0">
                                         admin
                                     </Link>
                                 </li>
                             </IfRole>
-                            <Link to="/login" onClick={handleLogout} className="nav-link p-0">
+                            <button 
+                                onClick={handleLogout} 
+                                className="nav-link p-0 bg-transparent border-0 text-start"
+                            >
                                 Cerrar sesión
-                            </Link>
+                            </button>
                         </IfAuthenticated>
                         <IfNotAuthenticated>
                             <Link to="/login" className="nav-link p-0">
                                 Iniciar sesión
                             </Link>
-                            <button 
-                                onClick={() => setShowRegisterModal(true)} 
-                                className="nav-link p-0 bg-transparent border-0 text-start"
-                            >
-                                Apuntarse
-                            </button>
                         </IfNotAuthenticated>
                     </div>
                 }
             >
                 <IfAuthenticated>
-                    <li className="nav-item user-name nav-link p-0">{`@${identity?.account?.username}`}</li>
+                    <li className="nav-item user-name nav-link p-0">{`@${user?.preferred_username}`}</li>
                 </IfAuthenticated>
             </Navbar>
-
-            <CustomModal 
-                show={showRegisterModal} 
-                onClose={() => setShowRegisterModal(false)} 
-                title="Apuntarse"
-            >
-                <RequestForm 
-                    onSubmit={handleSendRequest} 
-                    onCancel={() => setShowRegisterModal(false)} 
-                />
-            </CustomModal>
         </>
     );
 }

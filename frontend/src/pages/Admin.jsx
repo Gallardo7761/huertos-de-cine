@@ -19,6 +19,13 @@ import { useViewers } from "@/hooks/queries/useViewers";
 const Admin = () => {
     const { config, configLoading } = useConfig();
 
+    const reqConfig = {
+        baseUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.admin.dashboard}`,
+        moviesUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.movies.all}`,
+        viewersUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.viewers.all}`,
+        params: {},
+    };
+
     if (configLoading) return (
         <section className="text-center py-5" role="status">
             <div className="spinner-border primary" role="status"></div>
@@ -26,46 +33,21 @@ const Admin = () => {
         </section>
     );
 
-    const reqConfig = {
-        baseUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.admin.dashboard}`,
-        acceptRequestUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.requests.accept}`,
-        rejectRequestUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.requests.reject}`,
-        moviesUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.movies.all}`,
-        viewersUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.viewers.all}`,
-        params: {},
-    };
-
     return <AdminContent reqConfig={reqConfig} />;
 }
 
 const AdminContent = ({ reqConfig }) => {
     const { showError } = useError();
-
-    const { data, dataLoading, dataError, postData: handleRequest } = useDashboard(reqConfig.baseUrl, {}, showError);
-    
+    const { data, dataLoading, dataError } = useDashboard(reqConfig.baseUrl, {}, showError);
     const { postData: addMovie, putData: editMovie, deleteData: deleteMovie } = useMovies(reqConfig.moviesUrl, {}, showError, ['dashboard', 'movies']);
-
     const { postData: deleteViewer } = useViewers(reqConfig.viewersUrl, {}, showError, ['dashboard', 'viewers']);
-
     const [showAddModal, setShowAddModal] = useState(false);
     const [tmdbSelection, setTmdbSelection] = useState(null);
 
-    const requests = data?.requests || [];
     const viewers = data?.viewers || [];
     const movies = data?.movies || [];
 
-    const pendingRequests = requests.filter(req => req.status === 0);
-    const activeViewers = viewers.filter(viewer => viewer.account?.status === 1);
-
-    const handleAcceptRequest = async (requestId) => {
-        const url = reqConfig.acceptRequestUrl.replace(':requestId', requestId);
-        await handleRequest(url, {});
-    };
-
-    const handleRejectRequest = async (requestId) => {
-        const url = reqConfig.rejectRequestUrl.replace(':requestId', requestId);
-        await handleRequest(url, {});
-    };
+    const activeViewers = viewers.filter(viewer => viewer.deactivatedAt === null);
 
     const handleAddMovie = async (formData) => {
         const url = reqConfig.moviesUrl;
@@ -84,11 +66,9 @@ const AdminContent = ({ reqConfig }) => {
         await deleteMovie(url);
     };
 
-    const handleDeleteViewer = async (identity) => {
-        const url = reqConfig.viewersUrl + `/${identity.user.userId}/status`;
-        await deleteViewer(url, {
-            status: 0
-        });
+    const handleDeleteViewer = async (userId) => {
+        const url = reqConfig.viewersUrl + `/${userId}/status`;
+        await deleteViewer(url, { status: 0 });
     };
 
     const isFirstLoad = dataLoading && !data;
@@ -101,26 +81,21 @@ const AdminContent = ({ reqConfig }) => {
 
             <section className="admin-section mb-4">
                 <div className="d-flex justify-content-between align-items-center gap-3 mb-2 flex-wrap">
-                    <h2 className="m-0 text-white">Solicitudes</h2>
-                    <small className="text-muted">{pendingRequests.length} solicitudes</small>
-                </div>
-                <div className="rounded-4 p-3 user-container">
-                    <div className="row g-3 m-0">
-                        {pendingRequests.length === 0 ? <p className="admin-empty-state m-0">Sin solicitudes.</p> :
-                            pendingRequests.map(req => <UserCard key={req.requestId} identity={{ user: req, account: { status: 0 } }} renderMode="add" onAdd={() => handleAcceptRequest(req.requestId)} onReject={() => handleRejectRequest(req.requestId)} />)}
-                    </div>
-                </div>
-            </section>
-
-            <section className="admin-section mb-4">
-                <div className="d-flex justify-content-between align-items-center gap-3 mb-2 flex-wrap">
                     <h2 className="m-0 text-white">Usuarios añadidos</h2>
                     <small className="text-muted">{activeViewers.length} usuarios</small>
                 </div>
                 <div className="rounded-4 p-3 user-container">
                     <div className="row g-3 m-0">
                         {activeViewers.length === 0 ? <p className="admin-empty-state m-0">Sin usuarios.</p> :
-                            activeViewers.map(v => <UserCard key={v.user.userId} identity={v} renderMode="delete" onDelete={() => handleDeleteViewer(v)} />)}
+                            activeViewers.map(v => (
+                                <UserCard 
+                                    key={v.userId} 
+                                    name={v.name}
+                                    renderMode="delete" 
+                                    onDelete={() => handleDeleteViewer(v.userId)} 
+                                />
+                            ))
+                        }
                     </div>
                 </div>
             </section>

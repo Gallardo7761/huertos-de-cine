@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import { handleAxiosError } from '../../util/apiUtils';
+import axiosInstance from '../../api/axiosInstance';
 
 const getAuthHeaders = (isFormData = false) => {
   const token = localStorage.getItem('token');
@@ -17,7 +17,7 @@ export const usePostMutation = (onError) => {
     mutationFn: async ({ url, data }) => {
       const isFormData = data instanceof FormData;
       const headers = getAuthHeaders(isFormData);
-      const response = await axios.post(url, data, { headers });
+      const response = await axiosInstance.post(url, data, { headers });
       return response.data;
     },
     onError: (error) => {
@@ -35,7 +35,7 @@ export const usePutMutation = (onError) => {
     mutationFn: async ({ url, data }) => {
       const isFormData = data instanceof FormData;
       const headers = getAuthHeaders(isFormData);
-      const response = await axios.put(url, data, { headers });
+      const response = await axiosInstance.put(url, data, { headers });
       return response.data;
     },
     onError: (error) => {
@@ -56,7 +56,7 @@ export const useDeleteMutation = (onError) => {
       if (data) {
         config.data = data;
       }
-      const response = await axios.delete(url, config);
+      const response = await axiosInstance.delete(url, config);
       return response.data;
     },
     onError: (error) => {

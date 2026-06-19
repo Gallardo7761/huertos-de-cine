@@ -1,117 +1,67 @@
-import { useState, useEffect, createContext } from "react";
-import createAxiosInstance from "@/api/axiosInstance";
+import { AuthProvider as OidcProvider, useAuth as useOidcAuth } from "react-oidc-context";
+import { createContext, useState } from "react";
 import { useConfig } from "@/hooks/useConfig";
+import { WebStorageStateStore } from "oidc-client-ts";
 
 export const AuthContext = createContext();
 
+const oidcConfig = {
+  authority: "https://id.miarma.net",
+  client_id: "hdc-frontend-id",
+  redirect_uri: window.location.origin,
+  response_type: "code",
+  scope: "openid profile email groups",
+  loadUserInfo: true,
+  userStore: new WebStorageStateStore({ store: window.localStorage }),
+  onSigninCallback: () => {
+    window.history.replaceState({}, document.title, "/");
+  }
+};
+
 export const AuthProvider = ({ children }) => {
-  const axios = createAxiosInstance();
-  const { config } = useConfig();
+  const { config, configLoading } = useConfig();
 
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
-  const [identity, setIdentity] = useState(() => {
-    const stored = localStorage.getItem("identity");
-    return stored ? JSON.parse(stored) : null;
-  });
+  if (configLoading || !config) return null;
 
-  const [authStatus, setAuthStatus] = useState("checking");
-  const [error, setError] = useState(null);
+  return (
+    <OidcProvider {...oidcConfig}>
+      <AuthBridge>{children}</AuthBridge>
+    </OidcProvider>
+  );
+};
 
-  useEffect(() => {
-    if (!config) return;
+const AuthBridge = ({ children }) => {
+  const oidc = useOidcAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-    if (!token) {
-      setAuthStatus("unauthenticated");
-      return;
-    }
+  const authStatus = (oidc.isLoading || oidc.activeNavigator || isLoggingOut)
+    ? "checking" 
+    : oidc.isAuthenticated ? "authenticated" : "unauthenticated";
 
-    const BASE_URL = config.apiConfig.coreUrl;
-    const VALIDATE_URL = `${BASE_URL}${config.apiConfig.endpoints.auth.validateToken}`;
+  const user = oidc.user ? {
+    sub: oidc.user.profile.sub,
+    name: oidc.user.profile.name || "Usuario",
+    preferred_username: oidc.user.profile.preferred_username || oidc.user.profile.sub?.substring(0, 8),
+    email: oidc.user.profile.email,
+    groups: oidc.user.profile.groups || [],
+    role: oidc.user.profile.groups?.includes("hdc_admins") ? "ADMIN" : "USER"
+  } : null;
 
-    const checkAuth = async () => {
-      try {
-        const res = await axios.get(VALIDATE_URL, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (res.status === 200) {
-          setAuthStatus("authenticated");
-        } else {
-          logout();
-        }
-      } catch (err) {
-        console.error("Error validando token:", err);
-        logout();
-      }
-    };
-
-    checkAuth();
-  }, [token, config]);
-
-  const login = async (formData) => {
-    setError(null);
-
-    const BASE_URL = config.apiConfig.baseUrl;
-    const LOGIN_URL = `${BASE_URL}${config.apiConfig.endpoints.auth.login}`;
-
-    try {
-      const res = await axios.post(LOGIN_URL, formData);
-
-      const { token, user, account, metadata } = res.data;
-
-      const identity = {
-        user,
-        account,
-        metadata,
-      };
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("identity", JSON.stringify(identity));
-
-      setToken(token);
-      setIdentity(identity);
-      setAuthStatus("authenticated");
-    } catch (err) {
-      console.error("Error al iniciar sesión:", err);
-
-      let message = "Ha ocurrido un error inesperado.";
-
-      if (err.response) {
-        const { status, data } = err.response;
-
-        if (status === 400) {
-          message = "Usuario o contraseña incorrectos.";
-        } else if (status === 403) {
-          message = "Tu cuenta está inactiva o suspendida.";
-        } else if (status === 404) {
-          message = "Usuario no encontrado.";
-        } else if (data?.message) {
-          message = data.message;
-        }
-      }
-
-      setError(message);
-      throw new Error(message);
-    }
-  };
-
+  const login = () => oidc.signinRedirect();
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("identity");
-    setIdentity(null);
-    setToken(null);
-    setAuthStatus("unauthenticated");
+    setIsLoggingOut(true);
+    oidc.signoutRedirect({ post_logout_redirect_uri: window.location.origin });
   };
 
   return (
     <AuthContext.Provider
       value={{
-        identity,        // { user, account, metadata }
-        token,
+        user,
+        token: oidc.user?.access_token,
         authStatus,
         login,
         logout,
-        error,
+        error: oidc.error?.message,
       }}
     >
       {children}

@@ -1,30 +1,67 @@
 import Header from "@/components/Header";
 import { Route, Routes, Navigate, Link } from 'react-router-dom'
-import Login from "@/pages/Login";
 import Votar from "@/pages/Votar";
 import NotFound from "@/pages/NotFound";
 import Footer from "@/components/Footer";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
-import { CONSTANTS } from "@/util/constants";
 import Admin from "@/pages/Admin";
-import useSessionRenewal from "@/hooks/useSessionRenewal";
+import { useAuth } from "./hooks/useAuth";
+import { useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
-const App = () => {
-  const { modal: renewalModal } = useSessionRenewal();
+const LoginRedirect = () => {
+  const { login, authStatus } = useAuth();
+
+  useEffect(() => {
+    if (authStatus === "unauthenticated") {
+      login();
+    }
+  }, [authStatus, login]);
+
+  if (authStatus === "authenticated") return <Navigate to="/votar" replace />;
+
+  return <div className="text-center py-5">Redirigiendo a MiarmaID...</div>;
+};
+
+const HomeTrafficCop = () => {
+  const { authStatus } = useAuth();
+
+  if (authStatus === "checking") {
+    return (
+      <div className="text-center py-5">
+        <FontAwesomeIcon icon={faSpinner} spin size="2xl" />
+      </div>
+    );
+  }
+
+  if (authStatus === "authenticated") {
+    return <Navigate to="/votar" replace />;
+  }
 
   return (
+    <div className="d-flex gap-3 align-items-center my-5 w-100 justify-content-center text-secondary">
+      <FontAwesomeIcon icon={faLock} size="xl" />
+      <h1 className="m-0">Inicia sesión para votar</h1>
+    </div>
+  );
+};
+
+const App = () => {
+  return (
     <>
-      {renewalModal}
       <Header />
       <Routes>
-        <Route path="/" element={
-          <ProtectedRoute minimumRoles={[CONSTANTS.ROLE_USER, CONSTANTS.ROLE_ADMIN, CONSTANTS.ROLE_DEV]}>
+        <Route path="/" element={<HomeTrafficCop />} />
+        
+        <Route path="/votar" element={
+          <ProtectedRoute minimumRoles={["USER", "ADMIN"]}>
             <Votar />
           </ProtectedRoute>
         } />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<LoginRedirect />} />
         <Route path="/admin" element={
-          <ProtectedRoute minimumRoles={[CONSTANTS.ROLE_ADMIN, CONSTANTS.ROLE_DEV]}>
+          <ProtectedRoute minimumRoles={["ADMIN"]}>
             <Admin />
           </ProtectedRoute>
         } />

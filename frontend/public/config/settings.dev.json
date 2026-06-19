@@ -1,14 +1,7 @@
 {
     "apiConfig": {
-        "baseUrl": "http://localhost:10003/v2/cine",
-        "coreUrl": "http://localhost:10000/v2/core",
+        "baseUrl": "http://localhost:10000/v2/cine",
         "endpoints": {
-            "auth": {
-                "login": "/auth/login",
-                "refreshToken": "/auth/refresh",
-                "changePassword": "/auth/change-password",
-                "validateToken": "/auth/validate"
-            },
             "admin": {
                 "dashboard": "/admin/dashboard"
             },
@@ -22,11 +15,6 @@
                 "byId": "/movies/:movieId",
                 "upvote": "/movies/:movieId/upvote",
                 "downvote": "/movies/:movieId/downvote"
-            },
-            "requests": {
-                "all": "/requests",
-                "accept": "/requests/:requestId/accept",
-                "reject": "/requests/:requestId/reject"
             }
         }
     }

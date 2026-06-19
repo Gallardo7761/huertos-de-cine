@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { handleAxiosError } from '../../util/apiUtils';
+import axiosInstance from '../../api/axiosInstance'; 
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
@@ -18,7 +18,7 @@ export const useApiQuery = (queryKey, url, params = {}, options = {}) => {
     queryFn: async () => {
       const headers = getAuthHeaders();
       try {
-        const response = await axios.get(url, { 
+        const response = await axiosInstance.get(url, { 
           headers,
           params,
         });

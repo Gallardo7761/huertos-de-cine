@@ -5,7 +5,6 @@ import { faCancel, faEdit, faTrash, faThumbsDown, faThumbsUp } from '@fortawesom
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
 import IfRole from '@/components/Auth/IfRole';
-import { CONSTANTS } from '@/util/constants';
 import MovieForm from './MovieForm';
 
 const MovieCard = ({ movieId, title, description, cover, upvotes, downvotes, userVote, onVote, onEdit, onDelete, isAdmin }) => {
@@ -18,7 +17,7 @@ const MovieCard = ({ movieId, title, description, cover, upvotes, downvotes, use
     <>
       <div className="movie-card rounded-4 card h-100 m-0 p-0 shadow-sm">
         {isAdmin && (
-          <IfRole roles={[CONSTANTS.ROLE_ADMIN, CONSTANTS.ROLE_DEV]}>
+          <IfRole roles={['ADMIN']}>
             <div className="d-flex m-0 p-2 position-absolute top-0 end-0 gap-2" style={{ zIndex: 10 }}>
               <button className="btn btn-light edit-button" onClick={() => setEditModal(true)}>
                 <FontAwesomeIcon icon={faEdit} />
