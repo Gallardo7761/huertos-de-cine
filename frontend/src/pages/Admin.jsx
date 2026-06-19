@@ -47,7 +47,7 @@ const AdminContent = ({ reqConfig }) => {
     const viewers = data?.viewers || [];
     const movies = data?.movies || [];
 
-    const activeViewers = viewers.filter(viewer => viewer.deactivatedAt === null);
+    const activeViewers = viewers.filter(viewer => viewer.deactivatedAt === null || viewer.deactivatedAt === undefined);
 
     const handleAddMovie = async (formData) => {
         const url = reqConfig.moviesUrl;
@@ -67,8 +67,8 @@ const AdminContent = ({ reqConfig }) => {
     };
 
     const handleDeleteViewer = async (userId) => {
-        const url = reqConfig.viewersUrl + `/${userId}/status`;
-        await deleteViewer(url, { status: 0 });
+        const url = reqConfig.viewersUrl + `/${userId}/deactivate`;
+        await deleteViewer(url, {});
     };
 
     const isFirstLoad = dataLoading && !data;

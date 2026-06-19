@@ -14,7 +14,6 @@ services:
     working_dir: /data
     command: ["sh", "./entrypoint.sh"]
     environment:
-      - HOME=/home/jomaa
       - SERVER_PORT=${SERVER_PORT}
       - SERVER_SERVLET_CONTEXT_PATH=${SERVER_SERVLET_CONTEXT_PATH}
       - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME}
