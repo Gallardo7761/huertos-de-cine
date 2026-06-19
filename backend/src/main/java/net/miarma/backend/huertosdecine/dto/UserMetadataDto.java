@@ -1,38 +1,21 @@
 package net.miarma.backend.huertosdecine.dto;
 
+import lombok.Data;
+import net.miarma.backend.huertosdecine.enumerate.CineRoleType;
 import java.time.Instant;
-import java.util.UUID;
 
 public class UserMetadataDto {
+    @Data
     public static class Request {
-        private UUID userId;
-        private Byte role;
-
-        public UUID getUserId() { return userId; }
-        public void setUserId(UUID userId) { this.userId = userId; }
-        public Byte getRole() { return role; }
-        public void setRole(Byte role) { this.role = role; }
+        private String userId;
+        private CineRoleType role;
     }
 
+    @Data
     public static class Response {
-        private UUID userId;
-        private Byte role;
+        private String userId;
+        private CineRoleType role;
         private Instant createdAt;
         private Instant deactivatedAt;
-
-        public UUID getUserId() { return userId; }
-        public void setUserId(UUID userId) { this.userId = userId; }
-        public Byte getRole() { return role; }
-        public void setRole(Byte role) { this.role = role; }
-        public Instant getCreatedAt() { return createdAt; }
-        public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
-
-        public Instant getDeactivatedAt() {
-            return deactivatedAt;
-        }
-
-        public void setDeactivatedAt(Instant deactivatedAt) {
-            this.deactivatedAt = deactivatedAt;
-        }
     }
 }

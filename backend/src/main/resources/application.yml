@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:10003}
+  port: ${SERVER_PORT:10000}
   servlet:
     context-path: ${SERVER_SERVLET_CONTEXT_PATH:/v2/cine}
 
@@ -8,10 +8,10 @@ spring:
     name: ${SPRING_APPLICATION_NAME_CINE:huertos-de-cine-service}
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mariadb://mariadb:3306/miarma_v2}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/miarma_v3?currentSchema=cine}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
-    driver-class-name: org.mariadb.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     open-in-view: false
@@ -21,15 +21,17 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTHELIA_ISSUER_URI:https://id.miarma.net}
 
   jackson:
     default-property-inclusion: non_null
     time-zone: Europe/Madrid
-
-jwt:
-  expiration-ms: ${JWT_EXPIRATION_MS:3600000}
-  private-key-path: ${JWT_PRIVATE_KEY_PATH}
-  public-key-path: ${JWT_PUBLIC_KEY_PATH}
 
 logging:
   level:
@@ -39,17 +41,8 @@ logging:
     org.hibernate.SQL: WARN
     org.hibernate.orm.jdbc.bind: WARN
 
-filesDir: ${FILES_DIR:/files}
-
 management:
   endpoints:
     web:
       exposure:
         include: health,info
-
-core:
-  url: ${CORE_URL}
-
-cine:
-  user: ${CINE_USER}
-  password: ${CINE_PASS}

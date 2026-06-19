@@ -1,4 +1,4 @@
 package net.miarma.backend.huertosdecine.dto;
 
-public record StatusDto(Byte status) {
+public record StatusDto(Short status) {
 }

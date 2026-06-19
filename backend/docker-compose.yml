@@ -3,33 +3,25 @@ services:
     image: gallardo7761/java25-maven
     container_name: huertos-de-cine
     restart: unless-stopped
-    user: "${UID}:${GID}"
     ports:
-      - "127.0.0.1:10003:10003"
-      - "127.0.0.1:5008:5008"
+      - "127.0.0.1:10000:10000"
+      - "127.0.0.1:5005:5005"
     networks:
       - backend-dev-net
     volumes:
       - ./:/data
       - /home/jomaa/.m2:/root/.m2
-      - /home/jomaa/.config/backend/private.pem:/etc/backend/private.pem:ro
-      - /home/jomaa/.config/backend/public.pem:/etc/backend/public.pem:ro
     working_dir: /data
     command: ["sh", "./entrypoint.sh"]
     environment:
-      - SERVER_PORT=${CINE_PORT}
-      - SERVER_SERVLET_CONTEXT_PATH=${CINE_CONTEXT_PATH}
-      - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME_CINE}
+      - HOME=/home/jomaa
+      - SERVER_PORT=${SERVER_PORT}
+      - SERVER_SERVLET_CONTEXT_PATH=${SERVER_SERVLET_CONTEXT_PATH}
+      - SPRING_APPLICATION_NAME=${SPRING_APPLICATION_NAME}
       - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - JWT_PRIVATE_KEY_PATH=${JWT_PRIVATE_KEY_PATH}
-      - JWT_PUBLIC_KEY_PATH=${JWT_PUBLIC_KEY_PATH}
-      - JWT_EXPIRATION_MS=${JWT_EXPIRATION_MS}
-      - CORE_URL=${CORE_URL}
-      - CINE_USER=${CINE_USER}
-      - CINE_PASS=${CINE_PASS}
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
 
 networks:
   backend-dev-net:

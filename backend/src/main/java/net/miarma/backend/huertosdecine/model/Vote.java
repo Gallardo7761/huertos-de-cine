@@ -1,82 +1,35 @@
 package net.miarma.backend.huertosdecine.model;
 
 import jakarta.persistence.*;
-import net.miarma.backlib.util.UuidUtil;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "cine_votes")
+@Table(name = "cine_votes", schema = "huertos_de_cine")
 @IdClass(VoteId.class)
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Vote {
 
     @Id
-    @Column(name = "user_id", columnDefinition = "BINARY(16)")
-    private byte[] userIdBin;
+    @Column(name = "user_id", length = 255)
+    private String userId;
 
     @Id
-    @Column(name = "movie_id", columnDefinition = "BINARY(16)")
-    private byte[] movieIdBin;
-
-    @Transient
-    private UUID userId;
-
-    @Transient
+    @Column(name = "movie_id")
     private UUID movieId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id", insertable = false, updatable = false)
     private Movie movie;
 
-    private Byte vote;
+    @Column(name = "vote", nullable = false)
+    private Short vote;
 
     @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
-
-    @PrePersist
-    @PreUpdate
-    private void prePersist() {
-        if (userId != null) userIdBin = UuidUtil.uuidToBin(userId);
-        if (movieId != null) movieIdBin = UuidUtil.uuidToBin(movieId);
-    }
-
-    @PostLoad
-    private void postLoad() {
-        if (userIdBin != null) userId = UuidUtil.binToUUID(userIdBin);
-        if (movieIdBin != null) movieId = UuidUtil.binToUUID(movieIdBin);
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
-
-    public UUID getMovieId() {
-        return movieId;
-    }
-
-    public void setMovieId(UUID movieId) {
-        this.movieId = movieId;
-    }
-
-    public Byte getVote() {
-        return vote;
-    }
-
-    public void setVote(Byte vote) {
-        this.vote = vote;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
 }

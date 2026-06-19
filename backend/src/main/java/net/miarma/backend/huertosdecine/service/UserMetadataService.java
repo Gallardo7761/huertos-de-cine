@@ -1,63 +1,106 @@
 package net.miarma.backend.huertosdecine.service;
 
-import net.miarma.backend.huertosdecine.dto.UserMetadataDto;
-import net.miarma.backend.huertosdecine.mapper.UserMetadataMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import net.miarma.backend.huertosdecine.dto.ViewerDto;
+import net.miarma.backend.huertosdecine.enumerate.CineRoleType;
+import net.miarma.backend.huertosdecine.enumerate.RoleType;
+import net.miarma.backend.huertosdecine.enumerate.StatusType;
+import net.miarma.backend.huertosdecine.model.User;
 import net.miarma.backend.huertosdecine.model.UserMetadata;
 import net.miarma.backend.huertosdecine.repository.UserMetadataRepository;
 import net.miarma.backlib.exception.NotFoundException;
-import net.miarma.backlib.util.UuidUtil;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import java.util.UUID;
+import java.time.Instant;
+import java.util.List;
 
 @Service
 public class UserMetadataService {
     private final UserMetadataRepository repository;
+    private final EntityManager entityManager;
 
-    public UserMetadataService(UserMetadataRepository repository) { this.repository = repository; }
+    public UserMetadataService(UserMetadataRepository repository, EntityManager entityManager) {
+        this.repository = repository;
+        this.entityManager = entityManager;
+    }
 
-    @CacheEvict(
-            value = {
-                    "metadataByUserId",
-                    "metadataExists"
-            },
-            key = "#p0"
-    )
+    @Cacheable("viewers")
+    public List<ViewerDto> getAllDetails() {
+        return repository.findAllViewers();
+    }
+
+    public ViewerDto getDetailsById(String userId) {
+        return repository.findViewerById(userId)
+                .orElseThrow(() -> new NotFoundException("Espectador no encontrado"));
+    }
+
+    @CacheEvict(value = "viewers", allEntries = true)
     public UserMetadata create(UserMetadata metadata) {
-        if (metadata.getUserId() == null) metadata.setUserId(UUID.randomUUID());
         return repository.save(metadata);
     }
 
-    @Cacheable("metadataByUserId")
-    public UserMetadata getById(UUID userId) {
-        byte[] idBytes = UuidUtil.uuidToBin(userId);
-        return repository.findById(idBytes)
-                .orElseThrow(() -> new NotFoundException("Metadatos de usuario no encontrados"));
+    @CacheEvict(value = "viewers", allEntries = true)
+    public void updateRole(String userId, CineRoleType role) {
+        UserMetadata metadata = repository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Metadatos no encontrados"));
+        metadata.setRole(role);
+        repository.save(metadata);
     }
 
-    @Cacheable("metadataExists")
-    public boolean existsById(UUID userId) {
-        byte[] idBytes = UuidUtil.uuidToBin(userId);
-        return repository.existsById(idBytes);
+    @CacheEvict(value = "viewers", allEntries = true)
+    public void deactivateUser(String userId) {
+        UserMetadata metadata = repository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Metadatos no encontrados"));
+        metadata.setDeactivatedAt(Instant.now());
+        repository.save(metadata);
     }
 
-    @CacheEvict(
-        value = {
-            "metadataByUserId",
-            "metadataExists"
-        },
-        key = "#p0"
-    )
-    public UserMetadata update(UUID userId, UserMetadata changes) {
-        byte[] idBytes = UuidUtil.uuidToBin(userId);
+    @CacheEvict(value = "viewers", allEntries = true)
+    public UserMetadata createOrGetExisting(String userId) {
+        return repository.findById(userId)
+            .orElseGet(() -> {
+                UserMetadata newMeta = new UserMetadata();
+                newMeta.setUserId(userId);
+                newMeta.setRole(CineRoleType.USER);
+                newMeta.setCreatedAt(Instant.now());
+                return repository.save(newMeta);
+            });
+    }
 
-        UserMetadata metadata = repository.findById(idBytes)
-                .orElseThrow(() -> new NotFoundException("Metadatos de usuario no encontrados"));
+    @Transactional
+    @CacheEvict(value = "viewers", allEntries = true)
+    public UserMetadata syncUserJIT(String sub, String username, String email, String name, String givenName, String familyName, String picture, boolean isGlobalAdmin, boolean isLocalAdmin) {
+        Instant now = Instant.now();
+        RoleType globalRole = isGlobalAdmin ? RoleType.ADMIN : RoleType.USER;
+        CineRoleType localRole = isLocalAdmin ? CineRoleType.ADMIN : CineRoleType.USER;
 
-        if (changes.getRole() != null) metadata.setRole(changes.getRole());
-        if (changes.getDeactivatedAt() != null) metadata.setDeactivatedAt(changes.getDeactivatedAt());
+        User user = entityManager.find(User.class, sub);
+        if (user == null) {
+            user = new User(sub, name, givenName, familyName, username, picture, email,
+                true, globalRole, StatusType.ACTIVE, now, now);
+            entityManager.persist(user);
+        } else {
+            user.setName(name);
+            user.setPreferredUsername(username);
+            user.setEmail(email);
+            user.setUpdatedAt(now);
+            user.setGlobalRole(globalRole);
+            entityManager.merge(user);
+        }
 
-        return repository.save(metadata);
+        return repository.findById(sub)
+                .map(existingMeta -> {
+                    existingMeta.setRole(localRole);
+                    return repository.save(existingMeta);
+                })
+                .orElseGet(() -> {
+                    UserMetadata newMeta = new UserMetadata();
+                    newMeta.setUserId(sub);
+                    newMeta.setRole(localRole);
+                    newMeta.setCreatedAt(now);
+                    return repository.save(newMeta);
+                });
     }
 }

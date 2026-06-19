@@ -4,10 +4,8 @@ import net.miarma.backend.huertosdecine.dto.UserMetadataDto;
 import net.miarma.backend.huertosdecine.model.UserMetadata;
 
 public class UserMetadataMapper {
-
     public static UserMetadataDto.Response toResponse(UserMetadata entity) {
         if (entity == null) return null;
-
         UserMetadataDto.Response dto = new UserMetadataDto.Response();
         dto.setUserId(entity.getUserId());
         dto.setRole(entity.getRole());
@@ -18,22 +16,9 @@ public class UserMetadataMapper {
 
     public static UserMetadata toEntity(UserMetadataDto.Request dto) {
         if (dto == null) return null;
-
         UserMetadata entity = new UserMetadata();
         entity.setUserId(dto.getUserId());
         entity.setRole(dto.getRole());
-        return entity;
-    }
-
-    public static UserMetadata fromResponse(UserMetadataDto.Response dto) {
-        if (dto == null) return null;
-
-        UserMetadata entity = new UserMetadata();
-        entity.setUserId(dto.getUserId());
-        entity.setRole(dto.getRole());
-        entity.setCreatedAt(dto.getCreatedAt());
-        entity.setDeactivatedAt(dto.getDeactivatedAt());
-
         return entity;
     }
 }

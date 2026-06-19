@@ -1,83 +1,33 @@
 package net.miarma.backend.huertosdecine.model;
 
 import jakarta.persistence.*;
-import net.miarma.backlib.util.UuidUtil;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "cine_movies")
+@Table(name = "cine_movies", schema = "huertos_de_cine")
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Movie {
 
     @Id
-    @Column(name = "movie_id", columnDefinition = "BINARY(16)")
-    private byte[] movieIdBin;
-
-    @Transient
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "movie_id")
     private UUID movieId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 64)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 512)
     private String cover;
 
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Vote> votes = new ArrayList<>();
-
-    @PrePersist
-    @PreUpdate
-    private void prePersist() {
-        if (movieId != null) movieIdBin = UuidUtil.uuidToBin(movieId);
-    }
-
-    @PostLoad
-    private void postLoad() {
-        if (movieIdBin != null) movieId = UuidUtil.binToUUID(movieIdBin);
-    }
-
-    public UUID getMovieId() {
-        return movieId;
-    }
-
-    public void setMovieId(UUID movieId) {
-        this.movieId = movieId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCover() {
-        return cover;
-    }
-
-    public void setCover(String cover) {
-        this.cover = cover;
-    }
-
-    public List<Vote> getVotes() {
-        return votes;
-    }
-
-    public void setVotes(List<Vote> votes) {
-        this.votes = votes;
-    }
 }

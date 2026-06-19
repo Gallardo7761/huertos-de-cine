@@ -12,14 +12,11 @@ import java.util.concurrent.TimeUnit;
 public class CacheConfig {
     @Bean
     public CacheManager cacheManager() {
-        CaffeineCacheManager manager = new CaffeineCacheManager(
-                "viewers", "viewerById", "metadataByUserId",
-                "metadataExists"
-        );
+        CaffeineCacheManager manager = new CaffeineCacheManager("viewers");
         manager.setCaffeine(
-                Caffeine.newBuilder()
-                        .expireAfterWrite(10, TimeUnit.MINUTES)
-                        .maximumSize(10_000)
+            Caffeine.newBuilder()
+                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .maximumSize(10_000)
         );
         return manager;
     }
