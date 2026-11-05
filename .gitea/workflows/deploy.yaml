@@ -111,8 +111,8 @@ jobs:
           context: ./backend
           push: true
           tags: |
-            git.killobyte.es/gallardo7761/huertos-cine-back:latest
-            git.killobyte.es/gallardo7761/huertos-cine-back:${{ gitea.sha }}
+            git.killobyte.es/huertos-bellavista/huertos-cine-back:latest
+            git.killobyte.es/huertos-bellavista/huertos-cine-back:${{ gitea.sha }}
 
   build-frontend:
     needs: [changes, lint-frontend]
@@ -138,8 +138,8 @@ jobs:
           build-args: |
             VITE_TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}
           tags: |
-            git.killobyte.es/gallardo7761/huertos-cine-front:latest
-            git.killobyte.es/gallardo7761/huertos-cine-front:${{ gitea.sha }}
+            git.killobyte.es/huertos-bellavista/huertos-cine-front:latest
+            git.killobyte.es/huertos-bellavista/huertos-cine-front:${{ gitea.sha }}
 
   deploy:
     needs: [changes, build-backend, build-frontend]
