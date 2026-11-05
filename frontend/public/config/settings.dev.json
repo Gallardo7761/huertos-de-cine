@@ -7,6 +7,7 @@
             },
             "viewers": {
                 "all": "/viewers",
+                "access": "/viewers/access",
                 "byId": "/viewers/:userId",
                 "status": "/viewers/:userId/status"
             },
