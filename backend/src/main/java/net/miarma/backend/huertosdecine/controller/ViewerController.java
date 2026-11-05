@@ -1,7 +1,9 @@
 package net.miarma.backend.huertosdecine.controller;
 
+import net.miarma.backend.huertosdecine.dto.CineAccessDto;
 import net.miarma.backend.huertosdecine.dto.UserMetadataDto;
 import net.miarma.backend.huertosdecine.dto.ViewerDto;
+import net.miarma.backend.huertosdecine.service.CineAccessService;
 import net.miarma.backend.huertosdecine.service.ViewerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,8 +17,39 @@ import java.util.Map;
 public class ViewerController {
 
     private final ViewerService service;
+    private final CineAccessService accessService;
 
-    public ViewerController(ViewerService service) { this.service = service; }
+    public ViewerController(ViewerService service, CineAccessService accessService) {
+        this.service = service;
+        this.accessService = accessService;
+    }
+
+    @GetMapping("/access")
+    public ResponseEntity<List<CineAccessDto.User>> getAccess() {
+        return ResponseEntity.ok(accessService.getUsers());
+    }
+
+    @GetMapping("/access/candidates")
+    public ResponseEntity<List<CineAccessDto.User>> getCandidates() {
+        return ResponseEntity.ok(accessService.getCandidates());
+    }
+
+    @PutMapping("/access/{username}")
+    public ResponseEntity<Void> grant(@PathVariable("username") String username) {
+        accessService.grant(username);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/access/{username}")
+    public ResponseEntity<Void> revoke(@PathVariable("username") String username) {
+        accessService.revoke(username);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/access/external")
+    public ResponseEntity<CineAccessDto.ExternalResponse> createExternal(@RequestBody CineAccessDto.ExternalRequest request) {
+        return ResponseEntity.ok(accessService.createExternal(request));
+    }
 
     @GetMapping
     public ResponseEntity<List<ViewerDto>> getAll() {

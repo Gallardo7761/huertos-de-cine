@@ -2,16 +2,20 @@ server:
   port: ${SERVER_PORT:10000}
   servlet:
     context-path: ${SERVER_SERVLET_CONTEXT_PATH:/v2/cine}
+  forward-headers-strategy: native
 
 spring:
   application:
     name: ${SPRING_APPLICATION_NAME_CINE:huertos-de-cine-service}
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/miarma_v3?currentSchema=cine}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/huertos_de_cine}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
+  flyway:
+    schemas: public
 
   jpa:
     open-in-view: false
@@ -27,11 +31,26 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${AUTHELIA_ISSUER_URI:https://id.miarma.net}
+          issuer-uri: ${OIDC_ISSUER_URI:https://id.huertosbellavista.es}
+          jwk-set-uri: ${OIDC_JWK_SET_URI:https://id.huertosbellavista.es/jwks.json}
+          audiences: ${OIDC_AUDIENCE:https://cine.huertosbellavista.es}
 
   jackson:
     default-property-inclusion: non_null
     time-zone: Europe/Madrid
+
+oidc:
+  client-id: ${OIDC_CLIENT_ID:cine-web}
+
+cine:
+  users-group: ${CINE_USERS_GROUP:cine_users}
+  admins-group: ${CINE_ADMINS_GROUP:cine_admins}
+  members-group: ${CINE_MEMBERS_GROUP:huertos_users}
+
+lldap:
+  url: ${LLDAP_URL:http://lldap:17170}
+  username: ${LLDAP_USERNAME:cine}
+  password: ${LLDAP_PASSWORD:}
 
 logging:
   level:
@@ -45,4 +64,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health

@@ -54,7 +54,9 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt.jwtAuthenticationConverter(jitConverter)));
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(jitConverter))
+                .authenticationEntryPoint(authEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler));
 
         return http.build();
     }
