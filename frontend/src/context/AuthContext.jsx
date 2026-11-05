@@ -2,12 +2,13 @@ import { AuthProvider as OidcProvider, useAuth as useOidcAuth } from "react-oidc
 import { createContext, useState } from "react";
 import { useConfig } from "@/hooks/useConfig";
 import { WebStorageStateStore } from "oidc-client-ts";
+import { ADMIN_GROUP, OIDC_AUTHORITY, OIDC_CLIENT_ID } from "@/util/oidc";
 
 export const AuthContext = createContext();
 
 const oidcConfig = {
-  authority: "https://id.miarma.net",
-  client_id: "hdc-frontend-id",
+  authority: OIDC_AUTHORITY,
+  client_id: OIDC_CLIENT_ID,
   redirect_uri: window.location.origin,
   response_type: "code",
   scope: "openid profile email groups",
@@ -44,7 +45,7 @@ const AuthBridge = ({ children }) => {
     preferred_username: oidc.user.profile.preferred_username || oidc.user.profile.sub?.substring(0, 8),
     email: oidc.user.profile.email,
     groups: oidc.user.profile.groups || [],
-    role: oidc.user.profile.groups?.includes("hdc_admins") ? "ADMIN" : "USER"
+    role: oidc.user.profile.groups?.includes(ADMIN_GROUP) ? "ADMIN" : "USER"
   } : null;
 
   const login = () => oidc.signinRedirect();

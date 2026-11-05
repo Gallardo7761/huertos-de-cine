@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion as _motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
 import '@/css/Navbar.css';
@@ -86,7 +86,7 @@ const NavBar = ({ children, rightContent }) => {
         <AnimatePresence>
           {isOpen && (
             <>
-              <motion.button
+              <_motion.button
                 className="navbar-overlay d-lg-none"
                 aria-label="Cerrar navegación"
                 initial={{ opacity: 0 }}
@@ -96,7 +96,7 @@ const NavBar = ({ children, rightContent }) => {
                 type="button"
               />
 
-              <motion.aside
+              <_motion.aside
                 className="navbar-drawer d-lg-none"
                 id="navbarDrawer"
                 role="dialog"
@@ -128,7 +128,7 @@ const NavBar = ({ children, rightContent }) => {
                     {rightContent}
                   </div>
                 )}
-              </motion.aside>
+              </_motion.aside>
             </>
           )}
         </AnimatePresence>

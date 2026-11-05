@@ -1,6 +1,6 @@
 {
     "apiConfig": {
-        "baseUrl": "https://api.miarma.net/v2/cine",
+        "baseUrl": "https://api.huertosbellavista.es/v2/cine",
         "endpoints": {
             "admin": {
                 "dashboard": "/admin/dashboard"
