@@ -21,7 +21,7 @@ const LoginRedirect = () => {
 
   if (authStatus === "authenticated") return <Navigate to="/votar" replace />;
 
-  return <div className="text-center py-5">Redirigiendo a MiarmaID...</div>;
+  return <div className="text-center py-5">Redirigiendo a HuertosID...</div>;
 };
 
 const HomeTrafficCop = () => {

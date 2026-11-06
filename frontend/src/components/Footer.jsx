@@ -3,7 +3,7 @@ const Footer = () => {
         <footer>
             <div className="container mx-auto text-center mt-5">
                 <p className="text-xs mt-2">
-                    Hecho con ❤️ por <a href="https://jose.miarma.net">Gallardo7761</a>
+                    Hecho con ❤️ por <a href="https://jose.killobyte.es">Gallardo7761</a>
                 </p>
             </div>
         </footer>
